@@ -6,22 +6,22 @@
 
 ## Descrição Curta
 
-Dashboard bancário brasileiro em Angular para consulta de saldo, extrato, cartões, favorecidos e transferências Pix simuladas, com foco em uma experiência confiável, clara e precisa.
+Dashboard bancário brasileiro em Angular para consulta de saldo, extrato, cartões, favorecidos e transferências Pix, com foco em uma experiência confiável, clara e precisa.
 
 ## Objetivo
 
-Criar uma aplicação front-end bancária completa o suficiente para demonstrar domínio técnico em Angular moderno, arquitetura de features, rotas, formulários, API REST simulada, NgRx, RxJS, SCSS, acessibilidade, responsividade, testes, Git e CI/CD.
+Criar uma aplicação front-end bancária completa o suficiente para demonstrar domínio técnico em Angular moderno, arquitetura de features, rotas, formulários, API REST, NgRx, RxJS, SCSS, acessibilidade, responsividade, testes, Git e CI/CD.
 
 O produto atende dois públicos: o usuário funcional, que precisa operar tarefas bancárias com clareza, e o avaliador técnico, que precisa enxergar maturidade de implementação e organização.
 
 ## Escopo Funcional
 
-- Login com autenticação fake e validação de formulário.
+- Login com autenticação e validação de formulário.
 - Dashboard com saldo, conta, cartões de resumo, últimas transações, atalhos e notificações.
 - Extrato com busca, filtros por período/tipo/status e detalhe de transação.
-- Transferência Pix simulada com seleção de favorecido, valor, confirmação e comprovante.
+- Transferência Pix com seleção de favorecido, valor, confirmação e comprovante.
 - Favorecidos com listagem, cadastro, edição, remoção e tela de detalhe.
-- Cartões com limite, status, vencimento, bloqueio/desbloqueio simulado e visualização de dados básicos.
+- Cartões com limite, status, vencimento, bloqueio/desbloqueio e visualização de dados básicos.
 - Perfil com dados pessoais, preferências básicas, segurança e notificações.
 - Página 404 para rotas inválidas.
 - Estados planejados para loading, empty, error, success, disabled e skeleton.
@@ -35,7 +35,7 @@ O produto atende dois públicos: o usuário funcional, que precisa operar tarefa
 - **Formulários:** Reactive Forms.
 - **Estado:** NgRx para domínios principais a partir da fase dedicada.
 - **Assíncrono:** RxJS.
-- **API fake:** MSW interceptando chamadas HTTP no browser.
+- **API REST:** endpoints de apoio para consumo HTTP no browser.
 - **Testes:** Vitest via Angular builder.
 - **Formatação:** Prettier.
 - **Idioma e domínio:** pt-BR, BRL, Pix, CPF/CNPJ e contexto bancário brasileiro.
@@ -55,10 +55,10 @@ O produto atende dois públicos: o usuário funcional, que precisa operar tarefa
 - **Login:** entrada pública com formulário, validação e feedback de erro.
 - **Dashboard:** visão inicial privada com resumo financeiro e atalhos.
 - **Extrato:** lista de transações com filtros e busca.
-- **Transferência:** fluxo Pix simulado com revisão antes de confirmar.
+- **Transferência:** fluxo Pix com revisão antes de confirmar.
 - **Favorecidos:** listagem e manutenção de contatos bancários.
 - **Detalhes do favorecido:** dados, histórico relacionado e ações.
-- **Cartões:** visualização de cartões, limite e ações simuladas.
+- **Cartões:** visualização de cartões, limite e ações de controle.
 - **Perfil:** dados do usuário, preferências e segurança.
 - **Página 404:** fallback simples para rotas inexistentes.
 
@@ -68,7 +68,7 @@ O produto atende dois públicos: o usuário funcional, que precisa operar tarefa
 
 - Cabeçalho simples com nome do produto.
 - Painel central com e-mail/CPF, senha, erro de autenticação e botão `Entrar`.
-- Área de apoio com aviso de ambiente simulado.
+- Área de apoio com avisos operacionais.
 
 ### Shell Privado
 
@@ -94,7 +94,7 @@ O produto atende dois públicos: o usuário funcional, que precisa operar tarefa
 - Etapa 1: selecionar favorecido ou informar chave Pix.
 - Etapa 2: informar valor e descrição.
 - Etapa 3: revisar dados antes de confirmar.
-- Etapa 4: exibir sucesso e comprovante simulado.
+- Etapa 4: exibir sucesso e comprovante.
 
 ### Favorecidos
 
@@ -105,14 +105,14 @@ O produto atende dois públicos: o usuário funcional, que precisa operar tarefa
 ### Cartões
 
 - Lista de cartões com final, bandeira, status e limite.
-- Detalhe com vencimento, limite utilizado e ações simuladas.
+- Detalhe com vencimento, limite utilizado e ações de controle.
 - Estados para cartão bloqueado, ativo e vencido.
 
 ### Perfil
 
 - Dados pessoais e contato.
 - Preferências de notificações.
-- Seção de segurança com troca de senha simulada.
+- Seção de segurança com informações de acesso.
 
 ### Página 404
 

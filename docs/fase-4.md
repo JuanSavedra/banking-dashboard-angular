@@ -1,12 +1,12 @@
-# Fase 4 — API Fake e Camada de Serviços
+# Fase 4 — API REST e Camada de Serviços
 
 ## Objetivo
 
-Criar uma API REST fake, services Angular tipados e conexão das telas principais aos dados simulados.
+Criar uma API REST, services Angular tipados e conexão das telas principais aos dados operacionais.
 
 ## O que foi feito
 
-- API fake implementada no servidor Express SSR em `src/server.ts`.
+- API REST implementada no servidor Express SSR em `src/server.ts`.
 - Responses padronizadas com `{ data, message? }`.
 - Erros padronizados com `{ error: { code, message } }`.
 - Models TypeScript criados para conta, transações, favorecidos, transferências e cartões.
@@ -18,8 +18,8 @@ Criar uma API REST fake, services Angular tipados e conexão das telas principai
   - `CardsService`
 - Dashboard conectado a conta e últimas transações.
 - Extrato conectado à listagem de transações.
-- Favorecidos conectado à listagem, criação demo e detalhe.
-- Transferência conectada a um `POST` demo com comprovante fake.
+- Favorecidos conectado à listagem, criação e detalhe.
+- Transferência conectada a um `POST` com comprovante.
 - Cartões conectado à listagem e atualização simples de status.
 - Rotas autenticadas ajustadas para `RenderMode.Server`, evitando prerender de páginas com HTTP runtime.
 

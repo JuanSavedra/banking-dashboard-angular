@@ -1,12 +1,12 @@
 # Banking Dashboard
 
-Aplicação front-end bancária em Angular que simula um dashboard financeiro completo, com foco em experiência de produto, arquitetura profissional e demonstração técnica para avaliação de vaga.
+Aplicação front-end bancária em Angular para consulta de saldo, extrato, cartões, favorecidos e transferências Pix, com foco em experiência de produto, arquitetura profissional e demonstração técnica para avaliação de vaga.
 
 ## Status do Projeto
 
-Fase atual: **Fase 4 — API REST e camada de serviços**.
+Fase atual: **Fase 9 — CRUD de favorecidos**.
 
-A Fase 4 conecta as telas principais a endpoints REST no servidor SSR Express. A documentação detalhada está em [docs/fase-4.md](docs/fase-4.md).
+A Fase 9 implementa cadastro, edição, exclusão e detalhe de favorecidos com rotas, formulários, NgRx e API REST. A documentação detalhada está em [docs/fase-9.md](docs/fase-9.md).
 
 ## Objetivo Técnico
 
@@ -98,5 +98,6 @@ Use qualquer uma das opções abaixo para acessar o fluxo autenticado local:
 - [docs/fase-0.md](docs/fase-0.md): escopo fechado da Fase 0.
 - [docs/fase-1.md](docs/fase-1.md): setup técnico inicial e validações.
 - [docs/fase-2.md](docs/fase-2.md): design system, shell preview e componentes compartilhados.
-- [docs/fase-3.md](docs/fase-3.md): rotas, navegação real e autenticação fake.
-- [docs/fase-4.md](docs/fase-4.md): API fake, services HTTP e telas conectadas.
+- [docs/fase-3.md](docs/fase-3.md): rotas, navegação real e autenticação.
+- [docs/fase-4.md](docs/fase-4.md): API REST, services HTTP e telas conectadas.
+- [docs/fase-9.md](docs/fase-9.md): CRUD de favorecidos com rotas e formulários.

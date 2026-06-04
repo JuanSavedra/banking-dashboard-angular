@@ -33,7 +33,7 @@ Construir a primeira base visual real do projeto antes das regras de negócio. E
 
 ## Fora de Escopo
 
-- Autenticação real ou fake.
+- Autenticação.
 - Guards, interceptors e rotas privadas.
 - MSW e services.
 - NgRx.

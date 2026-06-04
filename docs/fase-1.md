@@ -73,7 +73,7 @@ git status --short --ignored
 
 - Rotas públicas e privadas.
 - Guards e interceptors reais.
-- Autenticação fake.
+- Autenticação.
 - NgRx.
 - MSW.
 - Componentes compartilhados.
