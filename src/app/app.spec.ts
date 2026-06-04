@@ -19,6 +19,16 @@ describe('App', () => {
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Banking Dashboard');
-    expect(compiled.textContent).toContain('Fase 1 - Setup técnico inicial');
+    expect(compiled.textContent).toContain('Fase 2 - Design system e layout base');
+  });
+
+  it('should render dashboard preview navigation', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.textContent).toContain('Dashboard');
+    expect(compiled.textContent).toContain('Extrato');
+    expect(compiled.textContent).toContain('Transferência');
   });
 });

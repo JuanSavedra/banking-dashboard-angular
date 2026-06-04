@@ -1,0 +1,39 @@
+.loading-state {
+  display: grid;
+  gap: var(--app-space-3);
+  padding: var(--app-space-5);
+  border: var(--app-border-subtle);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-color-background);
+}
+
+.loading-state__row {
+  height: 0.875rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--app-color-surface-strong),
+    var(--app-color-surface),
+    var(--app-color-surface-strong)
+  );
+  background-size: 200% 100%;
+  animation: loading-pulse 1.4s ease-in-out infinite;
+}
+
+.loading-state__row:nth-child(2) {
+  width: 82%;
+}
+
+.loading-state__row:nth-child(3) {
+  width: 64%;
+}
+
+@keyframes loading-pulse {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}

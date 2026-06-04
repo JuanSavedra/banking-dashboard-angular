@@ -1,0 +1,15 @@
+<article class="summary-card" [class]="'summary-card summary-card--' + tone">
+  <div class="summary-card__header">
+    <span>{{ label }}</span>
+
+    @if (icon) {
+      <mat-icon aria-hidden="true">{{ icon }}</mat-icon>
+    }
+  </div>
+
+  <strong>{{ value }}</strong>
+
+  @if (description) {
+    <p>{{ description }}</p>
+  }
+</article>

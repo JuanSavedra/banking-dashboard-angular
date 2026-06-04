@@ -1,0 +1,51 @@
+.summary-card {
+  display: grid;
+  min-height: 10rem;
+  padding: var(--app-space-5);
+  border: var(--app-border-subtle);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-color-background);
+}
+
+.summary-card__header {
+  display: flex;
+  gap: var(--app-space-3);
+  align-items: center;
+  justify-content: space-between;
+  color: var(--app-color-muted);
+  font-size: var(--app-font-size-label);
+  font-weight: 700;
+}
+
+mat-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  font-size: 1.25rem;
+}
+
+strong {
+  display: block;
+  margin-top: var(--app-space-5);
+  color: var(--app-color-text);
+  font-size: 1.75rem;
+  line-height: 1.1;
+}
+
+p {
+  margin: var(--app-space-3) 0 0;
+  color: var(--app-color-muted);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.summary-card--positive mat-icon {
+  color: var(--app-color-success);
+}
+
+.summary-card--negative mat-icon {
+  color: var(--app-color-error);
+}
+
+.summary-card--neutral mat-icon {
+  color: var(--app-color-primary);
+}

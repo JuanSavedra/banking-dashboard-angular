@@ -1,0 +1,7 @@
+<section class="loading-state" aria-live="polite" aria-busy="true">
+  <span class="app-sr-only">{{ label }}</span>
+
+  @for (row of skeletonRows; track row) {
+    <span class="loading-state__row"></span>
+  }
+</section>

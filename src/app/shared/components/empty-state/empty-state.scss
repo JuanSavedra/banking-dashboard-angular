@@ -1,0 +1,27 @@
+.empty-state {
+  display: grid;
+  justify-items: start;
+  padding: var(--app-space-6);
+  border: var(--app-border-subtle);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-color-background);
+}
+
+mat-icon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--app-color-primary);
+  font-size: 2rem;
+}
+
+h2 {
+  margin: var(--app-space-4) 0 0;
+  font-size: var(--app-font-size-title);
+}
+
+p {
+  max-width: 32rem;
+  margin: var(--app-space-2) 0 var(--app-space-4);
+  color: var(--app-color-muted);
+  line-height: 1.6;
+}

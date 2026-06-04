@@ -1,22 +1,117 @@
-<header class="app-header" aria-label="Cabeçalho do produto">
-  <div class="app-header__brand">
-    <span class="app-header__mark" aria-hidden="true">BD</span>
-    <div>
-      <strong>{{ productName() }}</strong>
-      <span>{{ phase() }}</span>
+<div class="app-layout">
+  <aside
+    class="app-sidebar"
+    [class.app-sidebar--open]="menuOpen()"
+    aria-label="Navegação principal"
+  >
+    <div class="app-sidebar__brand">
+      <span class="app-sidebar__mark" aria-hidden="true">BD</span>
+      <div>
+        <strong>{{ productName() }}</strong>
+        <span>{{ phase() }}</span>
+      </div>
     </div>
+
+    <nav class="app-sidebar__nav" aria-label="Áreas do dashboard">
+      @for (item of navigationItems; track item.label) {
+        <button type="button" [class.app-sidebar__item--active]="item.active">
+          <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </button>
+      }
+    </nav>
+  </aside>
+
+  <div class="app-surface">
+    <header class="app-topbar">
+      <button
+        mat-icon-button
+        type="button"
+        class="app-topbar__menu"
+        aria-label="Alternar navegação"
+        [attr.aria-expanded]="menuOpen()"
+        (click)="toggleMenu()"
+      >
+        <mat-icon aria-hidden="true">menu</mat-icon>
+      </button>
+
+      <div>
+        <strong>Olá, Ana</strong>
+        <span>Conta digital · Agência 0001</span>
+      </div>
+
+      <button mat-icon-button type="button" aria-label="Notificações">
+        <mat-icon aria-hidden="true">notifications</mat-icon>
+      </button>
+    </header>
+
+    <main class="app-content">
+      <app-page-header
+        eyebrow="Dashboard"
+        title="Visão financeira"
+        description="Resumo visual da base de layout, estados e componentes compartilhados do produto."
+      >
+        <button pageHeaderActions mat-flat-button type="button">
+          <mat-icon aria-hidden="true">add</mat-icon>
+          Nova transferência
+        </button>
+      </app-page-header>
+
+      <section class="summary-grid" aria-label="Resumo financeiro">
+        @for (summary of summaries; track summary.label) {
+          <app-summary-card
+            [label]="summary.label"
+            [value]="summary.value"
+            [description]="summary.description"
+            [icon]="summary.icon"
+            [tone]="summary.tone"
+          />
+        }
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="activity-panel" aria-labelledby="activity-title">
+          <div class="panel-heading">
+            <div>
+              <h2 id="activity-title">Atividade recente</h2>
+              <p>Dados estáticos para validar hierarquia visual.</p>
+            </div>
+            <app-status-badge label="Preview" variant="neutral" />
+          </div>
+
+          <ul class="activity-list">
+            @for (activity of activities; track activity.description) {
+              <li>
+                <div>
+                  <strong>{{ activity.description }}</strong>
+                  <span>{{ activity.detail }}</span>
+                </div>
+                <div class="activity-list__meta">
+                  <strong>{{ activity.amount }}</strong>
+                  <app-status-badge [label]="activity.badge" [variant]="activity.variant" />
+                </div>
+              </li>
+            }
+          </ul>
+        </article>
+
+        <aside class="state-panel" aria-label="Estados compartilhados">
+          <app-loading-state label="Carregando extrato" />
+          <app-empty-state
+            icon="group_add"
+            title="Nenhum favorecido recente"
+            description="Cadastre um favorecido para acelerar próximas transferências Pix."
+            actionLabel="Adicionar"
+          />
+          <app-error-state
+            title="Limite indisponível"
+            description="A consulta de limite será exibida quando a API fake estiver ativa."
+            actionLabel="Atualizar"
+          />
+        </aside>
+      </section>
+
+      <router-outlet />
+    </main>
   </div>
-</header>
-
-<main class="app-shell">
-  <section class="app-shell__intro" aria-labelledby="phase-title">
-    <p class="app-shell__eyebrow">Base profissional</p>
-    <h1 id="phase-title">Projeto preparado para crescer com Angular</h1>
-    <p>
-      Estrutura inicial, Material, lint e padrões de documentação serão usados como fundação para as
-      próximas fases do dashboard bancário.
-    </p>
-  </section>
-
-  <router-outlet />
-</main>
+</div>

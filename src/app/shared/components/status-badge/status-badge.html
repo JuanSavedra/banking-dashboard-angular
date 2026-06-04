@@ -1,0 +1,10 @@
+<span
+  class="status-badge"
+  [class.status-badge--success]="variant === 'success'"
+  [class.status-badge--warning]="variant === 'warning'"
+  [class.status-badge--error]="variant === 'error'"
+  [class.status-badge--info]="variant === 'info'"
+  [class.status-badge--neutral]="variant === 'neutral'"
+>
+  {{ label }}
+</span>
