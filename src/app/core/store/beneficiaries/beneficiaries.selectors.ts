@@ -2,17 +2,13 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 
 import { beneficiariesAdapter, BeneficiariesState } from './beneficiaries.reducer';
 
-export const selectBeneficiariesState =
-  createFeatureSelector<BeneficiariesState>('beneficiaries');
+export const selectBeneficiariesState = createFeatureSelector<BeneficiariesState>('beneficiaries');
 
 const { selectAll, selectEntities } = beneficiariesAdapter.getSelectors();
 
 export const selectAllBeneficiaries = createSelector(selectBeneficiariesState, selectAll);
 
-export const selectBeneficiaryEntities = createSelector(
-  selectBeneficiariesState,
-  selectEntities,
-);
+export const selectBeneficiaryEntities = createSelector(selectBeneficiariesState, selectEntities);
 
 export const selectBeneficiaryById = (id: string) =>
   createSelector(selectBeneficiaryEntities, (entities) => entities[id] ?? null);

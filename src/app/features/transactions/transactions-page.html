@@ -26,7 +26,12 @@
         aria-label="Buscar transações"
       />
       @if (searchControl.value) {
-        <button class="search-clear" type="button" (click)="clearSearch()" aria-label="Limpar busca">
+        <button
+          class="search-clear"
+          type="button"
+          (click)="clearSearch()"
+          aria-label="Limpar busca"
+        >
           <span class="material-icons">close</span>
         </button>
       }
@@ -41,7 +46,9 @@
             class="chip"
             [class.chip--active]="activeType() === opt.value"
             (click)="setType(opt.value)"
-          >{{ opt.label }}</button>
+          >
+            {{ opt.label }}
+          </button>
         }
       </div>
     </div>
@@ -55,7 +62,9 @@
             class="chip"
             [class.chip--active]="activeStatus() === opt.value"
             (click)="setStatus(opt.value)"
-          >{{ opt.label }}</button>
+          >
+            {{ opt.label }}
+          </button>
         }
       </div>
     </div>
@@ -106,19 +115,12 @@
 
     @if (totalPages() > 1) {
       <nav class="pagination" aria-label="Paginação do extrato">
-        <button
-          mat-button
-          type="button"
-          [disabled]="currentPage() === 1"
-          (click)="prevPage()"
-        >
+        <button mat-button type="button" [disabled]="currentPage() === 1" (click)="prevPage()">
           <mat-icon aria-hidden="true">chevron_left</mat-icon>
           Anterior
         </button>
 
-        <span class="pagination__info">
-          Página {{ currentPage() }} de {{ totalPages() }}
-        </span>
+        <span class="pagination__info"> Página {{ currentPage() }} de {{ totalPages() }} </span>
 
         <button
           mat-button

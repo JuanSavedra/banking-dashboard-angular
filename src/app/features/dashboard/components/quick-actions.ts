@@ -67,7 +67,9 @@ interface QuickAction {
         font-size: var(--app-font-size-label);
         font-weight: 700;
         text-align: center;
-        transition: background var(--app-motion-fast), color var(--app-motion-fast);
+        transition:
+          background var(--app-motion-fast),
+          color var(--app-motion-fast);
 
         mat-icon {
           color: var(--app-color-primary);

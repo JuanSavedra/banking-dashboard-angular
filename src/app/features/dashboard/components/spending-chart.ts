@@ -44,13 +44,7 @@ import { Component, Input } from '@angular/core';
           >
             {{ percentage }}
           </text>
-          <text
-            x="50"
-            y="63"
-            text-anchor="middle"
-            font-size="8"
-            fill="var(--app-color-muted)"
-          >
+          <text x="50" y="63" text-anchor="middle" font-size="8" fill="var(--app-color-muted)">
             gasto
           </text>
         </svg>

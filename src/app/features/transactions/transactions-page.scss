@@ -113,7 +113,10 @@
   font-weight: 700;
   font-family: var(--app-font-family);
   cursor: pointer;
-  transition: border-color var(--app-motion-fast), background var(--app-motion-fast), color var(--app-motion-fast);
+  transition:
+    border-color var(--app-motion-fast),
+    background var(--app-motion-fast),
+    color var(--app-motion-fast);
 
   &:hover:not(.chip--active) {
     border-color: var(--app-color-muted);

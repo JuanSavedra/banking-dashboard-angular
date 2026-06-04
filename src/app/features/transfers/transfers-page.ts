@@ -18,10 +18,7 @@ import {
   selectBeneficiariesError,
   selectBeneficiariesLoading,
 } from '../../core/store/beneficiaries/beneficiaries.selectors';
-import {
-  clearReceipt,
-  createTransfer,
-} from '../../core/store/transfers/transfers.actions';
+import { clearReceipt, createTransfer } from '../../core/store/transfers/transfers.actions';
 import {
   selectTransferError,
   selectTransferReceipt,
@@ -145,9 +142,7 @@ export class TransfersPageComponent implements OnInit {
       .subscribe((confirmed: boolean | undefined) => {
         if (confirmed) {
           const { beneficiaryId, description } = this.form.getRawValue();
-          this.store.dispatch(
-            createTransfer({ payload: { beneficiaryId, amount, description } }),
-          );
+          this.store.dispatch(createTransfer({ payload: { beneficiaryId, amount, description } }));
         }
       });
   }

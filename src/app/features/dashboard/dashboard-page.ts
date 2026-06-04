@@ -67,22 +67,18 @@ export class DashboardPageComponent implements OnInit {
   private readonly accountError = toSignal(this.store.select(selectAccountError), {
     initialValue: false,
   });
-  private readonly transactionsLoading = toSignal(
-    this.store.select(selectTransactionsLoading),
-    { initialValue: true },
-  );
-  private readonly transactionsError = toSignal(
-    this.store.select(selectTransactionsError),
-    { initialValue: false },
-  );
+  private readonly transactionsLoading = toSignal(this.store.select(selectTransactionsLoading), {
+    initialValue: true,
+  });
+  private readonly transactionsError = toSignal(this.store.select(selectTransactionsError), {
+    initialValue: false,
+  });
 
   protected readonly account = toSignal(this.store.select(selectAccount));
   protected readonly transactions = toSignal(this.store.select(selectAllTransactions), {
     initialValue: [],
   });
-  protected readonly loading = computed(
-    () => this.accountLoading() || this.transactionsLoading(),
-  );
+  protected readonly loading = computed(() => this.accountLoading() || this.transactionsLoading());
   protected readonly error = computed(() => this.accountError() || this.transactionsError());
 
   protected readonly summaries = computed<DashboardSummary[]>(() => {

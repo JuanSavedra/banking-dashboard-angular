@@ -2,8 +2,7 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 
 import { transactionsAdapter, TransactionsState } from './transactions.reducer';
 
-export const selectTransactionsState =
-  createFeatureSelector<TransactionsState>('transactions');
+export const selectTransactionsState = createFeatureSelector<TransactionsState>('transactions');
 
 const { selectAll } = transactionsAdapter.getSelectors();
 

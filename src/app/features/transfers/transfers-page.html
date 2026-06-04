@@ -55,12 +55,12 @@
         <mat-label>Favorecido</mat-label>
         <mat-select formControlName="beneficiaryId">
           @for (b of beneficiaries(); track b.id) {
-            <mat-option [value]="b.id">
-              {{ b.name }} — {{ b.bank }} · {{ b.pixKey }}
-            </mat-option>
+            <mat-option [value]="b.id"> {{ b.name }} — {{ b.bank }} · {{ b.pixKey }} </mat-option>
           }
         </mat-select>
-        @if (form.controls.beneficiaryId.hasError('required') && form.controls.beneficiaryId.touched) {
+        @if (
+          form.controls.beneficiaryId.hasError('required') && form.controls.beneficiaryId.touched
+        ) {
           <mat-error>Selecione um favorecido.</mat-error>
         }
       </mat-form-field>
@@ -99,8 +99,8 @@
       <div class="transfer-form__actions">
         @if (selectedBeneficiary()) {
           <p class="transfer-form__summary">
-            Enviando para <strong>{{ selectedBeneficiary()!.name }}</strong>
-            via <strong>{{ selectedBeneficiary()!.bank }}</strong>
+            Enviando para <strong>{{ selectedBeneficiary()!.name }}</strong> via
+            <strong>{{ selectedBeneficiary()!.bank }}</strong>
           </p>
         }
 

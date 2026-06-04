@@ -48,8 +48,6 @@ describe('LoginPageComponent', () => {
     component.form.setValue({ identifier: 'ana@banking.dev', password: '123456' });
     component.submit();
 
-    expect(dispatchSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: login.type }),
-    );
+    expect(dispatchSpy).toHaveBeenCalledWith(expect.objectContaining({ type: login.type }));
   });
 });
