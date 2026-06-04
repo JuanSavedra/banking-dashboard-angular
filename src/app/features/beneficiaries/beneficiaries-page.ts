@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,13 +25,12 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header';
-import {
-  StatusBadgeComponent,
-  StatusBadgeVariant,
-} from '../../shared/components/status-badge/status-badge';
+import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge';
+import { BeneficiaryStatusPipe } from '../../shared/pipes/beneficiary-status.pipe';
 
 @Component({
   selector: 'app-beneficiaries-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     ErrorStateComponent,
@@ -42,6 +41,7 @@ import {
     PageHeaderComponent,
     RouterLink,
     StatusBadgeComponent,
+    BeneficiaryStatusPipe,
   ],
   template: `
     <app-page-header
@@ -75,15 +75,13 @@ import {
     } @else {
       <section class="beneficiaries-list" aria-label="Lista de favorecidos">
         @for (beneficiary of beneficiaries(); track beneficiary.id) {
+          @let status = beneficiary.status | beneficiaryStatus;
           <article>
             <div>
               <strong>{{ beneficiary.name }}</strong>
               <span>{{ beneficiary.bank }} · {{ beneficiary.pixKey }}</span>
             </div>
-            <app-status-badge
-              [label]="statusLabel(beneficiary.status)"
-              [variant]="statusVariant(beneficiary.status)"
-            />
+            <app-status-badge [label]="status.label" [variant]="status.variant" />
             <div class="beneficiaries-list__actions">
               <a
                 mat-button
@@ -164,6 +162,7 @@ export class BeneficiariesPageComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
   private readonly store = inject(Store);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly beneficiaries = toSignal(this.store.select(selectAllBeneficiaries), {
     initialValue: [],
@@ -201,18 +200,11 @@ export class BeneficiariesPageComponent implements OnInit {
     this.dialog
       .open(ConfirmDialogComponent, { data, width: '22rem' })
       .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((confirmed: boolean | undefined) => {
         if (confirmed) {
           this.store.dispatch(deleteBeneficiary({ id: beneficiary.id }));
         }
       });
-  }
-
-  protected statusLabel(status: Beneficiary['status']): string {
-    return status === 'active' ? 'Ativo' : 'Pendente';
-  }
-
-  protected statusVariant(status: Beneficiary['status']): StatusBadgeVariant {
-    return status === 'active' ? 'success' : 'warning';
   }
 }

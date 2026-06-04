@@ -1,9 +1,11 @@
+import { CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-spending-chart',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
+  imports: [CurrencyPipe],
   template: `
     <div class="spending-chart">
       <p class="spending-chart__label">Gastos do mês</p>
@@ -54,11 +56,11 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
       <ul class="spending-chart__legend">
         <li>
           <span class="legend-dot legend-dot--primary"></span>
-          <span>Saídas: {{ formatCurrency(outcome) }}</span>
+          <span>Saídas: {{ outcome | currency }}</span>
         </li>
         <li>
           <span class="legend-dot legend-dot--track"></span>
-          <span>Entradas: {{ formatCurrency(income) }}</span>
+          <span>Entradas: {{ income | currency }}</span>
         </li>
       </ul>
     </div>
@@ -143,9 +145,5 @@ export class SpendingChartComponent {
 
   protected get dashOffset(): number {
     return this.circumference * (1 - this.ratio);
-  }
-
-  protected formatCurrency(value: number): string {
-    return new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency' }).format(value);
   }
 }

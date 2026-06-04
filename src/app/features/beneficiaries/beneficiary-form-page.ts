@@ -1,5 +1,13 @@
-import { Component, computed, effect, inject, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  OnInit,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -32,6 +40,7 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
 
 @Component({
   selector: 'app-beneficiary-form-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     ErrorStateComponent,
@@ -210,6 +219,7 @@ export class BeneficiaryFormPageComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private readonly store = inject(Store);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly beneficiaryId = this.route.snapshot.paramMap.get('id') ?? '';
   protected readonly isEditing = computed(() => Boolean(this.beneficiaryId));
@@ -272,10 +282,12 @@ export class BeneficiaryFormPageComponent implements OnInit {
     const value = this.form.getRawValue();
 
     if (this.isEditing()) {
-      this.actions$.pipe(ofType(updateBeneficiarySuccess), take(1)).subscribe(({ beneficiary }) => {
-        this.snackBar.open('Favorecido atualizado.', 'Fechar', { duration: 3000 });
-        void this.router.navigate(['/app/beneficiaries', beneficiary.id]);
-      });
+      this.actions$
+        .pipe(ofType(updateBeneficiarySuccess), take(1), takeUntilDestroyed(this.destroyRef))
+        .subscribe(({ beneficiary }) => {
+          this.snackBar.open('Favorecido atualizado.', 'Fechar', { duration: 3000 });
+          void this.router.navigate(['/app/beneficiaries', beneficiary.id]);
+        });
 
       this.store.dispatch(
         updateBeneficiary({
@@ -287,10 +299,12 @@ export class BeneficiaryFormPageComponent implements OnInit {
     }
 
     const { name, bank, document, pixKey } = value;
-    this.actions$.pipe(ofType(createBeneficiarySuccess), take(1)).subscribe(({ beneficiary }) => {
-      this.snackBar.open('Favorecido cadastrado.', 'Fechar', { duration: 3000 });
-      void this.router.navigate(['/app/beneficiaries', beneficiary.id]);
-    });
+    this.actions$
+      .pipe(ofType(createBeneficiarySuccess), take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ beneficiary }) => {
+        this.snackBar.open('Favorecido cadastrado.', 'Fechar', { duration: 3000 });
+        void this.router.navigate(['/app/beneficiaries', beneficiary.id]);
+      });
 
     this.store.dispatch(createBeneficiary({ payload: { name, bank, document, pixKey } }));
   }

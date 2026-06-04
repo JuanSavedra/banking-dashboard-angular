@@ -1,5 +1,14 @@
-import { Component, computed, effect, inject, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { CurrencyPipe, DatePipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  OnInit,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -36,6 +45,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
 
 @Component({
   selector: 'app-transfers-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     EmptyStateComponent,
@@ -49,15 +59,20 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
     PageHeaderComponent,
     ReactiveFormsModule,
     StatusBadgeComponent,
+    CurrencyPipe,
+    DatePipe,
   ],
   templateUrl: './transfers-page.html',
   styleUrl: './transfers-page.scss',
+  providers: [CurrencyPipe],
 })
 export class TransfersPageComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly snackBar = inject(MatSnackBar);
   private readonly store = inject(Store);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly currencyPipe = inject(CurrencyPipe);
 
   // ── Store state ───────────────────────────────────────────
   protected readonly beneficiaries = toSignal(this.store.select(selectAllBeneficiaries), {
@@ -131,7 +146,7 @@ export class TransfersPageComponent implements OnInit {
 
     const data: ConfirmDialogData = {
       title: 'Confirmar transferência',
-      description: `Transferir ${this.formatCurrency(amount)} para ${beneficiary.name} via Pix?`,
+      description: `Transferir ${this.currencyPipe.transform(amount)} para ${beneficiary.name} via Pix?`,
       confirmLabel: 'Confirmar',
       cancelLabel: 'Cancelar',
     };
@@ -139,6 +154,7 @@ export class TransfersPageComponent implements OnInit {
     this.dialog
       .open(ConfirmDialogComponent, { data, width: '22rem' })
       .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((confirmed: boolean | undefined) => {
         if (confirmed) {
           const { beneficiaryId, description } = this.form.getRawValue();
@@ -150,21 +166,5 @@ export class TransfersPageComponent implements OnInit {
   protected newTransfer(): void {
     this.store.dispatch(clearReceipt());
     this.form.reset({ description: 'Transferência Pix' });
-  }
-
-  // ── Helpers ───────────────────────────────────────────────
-  protected formatCurrency(value: number): string {
-    return new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency' }).format(value);
-  }
-
-  protected formatDate(value: string): string {
-    if (!value) return '';
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    }).format(new Date(value));
   }
 }

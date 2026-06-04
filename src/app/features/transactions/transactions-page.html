@@ -96,6 +96,7 @@
   } @else {
     <section class="transactions-panel" aria-label="Lista de transações">
       @for (transaction of filteredTransactions(); track transaction.id) {
+        @let status = transaction.status | transactionStatus;
         <article>
           <div class="transaction-info">
             <strong>{{ transaction.description }}</strong>
@@ -103,14 +104,11 @@
           </div>
           <div class="transaction-meta">
             <strong [class.positive]="transaction.type === 'credit'">
-              {{ formatSignedCurrency(transaction) }}
+              {{ transaction.amount | signedCurrency: transaction.type }}
             </strong>
-            <span>{{ formatDate(transaction.occurredAt) }}</span>
+            <span>{{ transaction.occurredAt | date: 'dd MMM yyyy' }}</span>
           </div>
-          <app-status-badge
-            [label]="statusLabel(transaction.status)"
-            [variant]="statusVariant(transaction.status)"
-          />
+          <app-status-badge [label]="status.label" [variant]="status.variant" />
         </article>
       }
     </section>

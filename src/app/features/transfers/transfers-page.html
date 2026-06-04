@@ -33,11 +33,11 @@
       </div>
       <div>
         <dt>Valor transferido</dt>
-        <dd class="receipt-panel__amount">{{ formatCurrency(receipt()!.amount) }}</dd>
+        <dd class="receipt-panel__amount">{{ receipt()!.amount | currency }}</dd>
       </div>
       <div>
         <dt>Data e hora</dt>
-        <dd>{{ formatDate(receipt()!.createdAt) }}</dd>
+        <dd>{{ receipt()!.createdAt | date: 'dd MMM yyyy, HH:mm' }}</dd>
       </div>
     </dl>
 

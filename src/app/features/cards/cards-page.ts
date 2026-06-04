@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { CurrencyPipe, DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl,
   FormGroup,
@@ -14,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
 
-import { Card, CardPurchase, UpdateCardPayload } from '../../core/models/banking';
+import { Card, UpdateCardPayload } from '../../core/models/banking';
 import { loadCards, updateCard } from '../../core/store/cards/cards.actions';
 import {
   selectAllCards,
@@ -30,10 +31,10 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header';
-import {
-  StatusBadgeComponent,
-  StatusBadgeVariant,
-} from '../../shared/components/status-badge/status-badge';
+import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge';
+import { CardStatusPipe } from '../../shared/pipes/card-status.pipe';
+import { CardTypePipe } from '../../shared/pipes/card-type.pipe';
+import { PurchaseStatusPipe } from '../../shared/pipes/purchase-status.pipe';
 
 type LimitForm = FormGroup<{ availableLimit: FormControl<number> }>;
 
@@ -52,6 +53,11 @@ type LimitForm = FormGroup<{ availableLimit: FormControl<number> }>;
     PageHeaderComponent,
     ReactiveFormsModule,
     StatusBadgeComponent,
+    CurrencyPipe,
+    DatePipe,
+    CardStatusPipe,
+    CardTypePipe,
+    PurchaseStatusPipe,
   ],
   template: `
     <app-page-header
@@ -78,26 +84,24 @@ type LimitForm = FormGroup<{ availableLimit: FormControl<number> }>;
     } @else {
       <section class="cards-grid" aria-label="Cartões da conta">
         @for (card of cards(); track card.id) {
+          @let cardState = card.status | cardStatus;
           <article class="card-panel" [attr.aria-labelledby]="'card-title-' + card.id">
             <div class="card-panel__heading">
               <div>
-                <span>{{ typeLabel(card.type) }}</span>
+                <span>{{ card.type | cardType }}</span>
                 <h2 [id]="'card-title-' + card.id">Final {{ card.finalDigits }}</h2>
               </div>
-              <app-status-badge
-                [label]="statusLabel(card.status)"
-                [variant]="statusVariant(card.status)"
-              />
+              <app-status-badge [label]="cardState.label" [variant]="cardState.variant" />
             </div>
 
             <dl class="card-panel__limits">
               <div>
                 <dt>Limite total</dt>
-                <dd>{{ formatCurrency(card.limit) }}</dd>
+                <dd>{{ card.limit | currency }}</dd>
               </div>
               <div>
                 <dt>Disponível</dt>
-                <dd>{{ formatCurrency(card.availableLimit) }}</dd>
+                <dd>{{ card.availableLimit | currency }}</dd>
               </div>
               <div>
                 <dt>Vencimento</dt>
@@ -156,16 +160,20 @@ type LimitForm = FormGroup<{ availableLimit: FormControl<number> }>;
               @if (card.recentPurchases.length) {
                 <ul>
                   @for (purchase of card.recentPurchases; track purchase.id) {
+                    @let purchaseState = purchase.status | purchaseStatus;
                     <li>
                       <div>
                         <strong>{{ purchase.description }}</strong>
-                        <span>{{ purchase.merchant }} · {{ formatDate(purchase.occurredAt) }}</span>
+                        <span
+                          >{{ purchase.merchant }} ·
+                          {{ purchase.occurredAt | date: 'dd MMM, HH:mm' }}</span
+                        >
                       </div>
                       <div class="purchase-meta">
-                        <strong>{{ formatCurrency(purchase.amount) }}</strong>
+                        <strong>{{ purchase.amount | currency }}</strong>
                         <app-status-badge
-                          [label]="purchaseStatusLabel(purchase)"
-                          [variant]="purchaseStatusVariant(purchase)"
+                          [label]="purchaseState.label"
+                          [variant]="purchaseState.variant"
                         />
                       </div>
                     </li>
@@ -323,6 +331,7 @@ export class CardsPageComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly store = inject(Store);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly cards = toSignal(this.store.select(selectAllCards), { initialValue: [] });
   protected readonly loading = toSignal(this.store.select(selectCardsLoading), {
@@ -370,44 +379,12 @@ export class CardsPageComponent implements OnInit {
     this.dialog
       .open(ConfirmDialogComponent, { data, width: '22rem' })
       .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((confirmed: boolean | undefined) => {
         if (confirmed) {
           this.updateCard(card.id, { status });
         }
       });
-  }
-
-  protected formatCurrency(value: number): string {
-    return new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency' }).format(value);
-  }
-
-  protected formatDate(value: string): string {
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      month: 'short',
-    }).format(new Date(value));
-  }
-
-  protected statusLabel(status: Card['status']): string {
-    return status === 'active' ? 'Ativo' : 'Bloqueado';
-  }
-
-  protected statusVariant(status: Card['status']): StatusBadgeVariant {
-    return status === 'active' ? 'success' : 'warning';
-  }
-
-  protected typeLabel(type: Card['type']): string {
-    return type === 'physical' ? 'Cartão físico' : 'Cartão virtual';
-  }
-
-  protected purchaseStatusLabel(purchase: CardPurchase): string {
-    return purchase.status === 'approved' ? 'Aprovada' : 'Processando';
-  }
-
-  protected purchaseStatusVariant(purchase: CardPurchase): StatusBadgeVariant {
-    return purchase.status === 'approved' ? 'success' : 'info';
   }
 
   protected limitForm(card: Card): LimitForm {

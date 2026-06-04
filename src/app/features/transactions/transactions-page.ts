@@ -7,6 +7,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { DatePipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,10 +26,9 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header';
-import {
-  StatusBadgeComponent,
-  StatusBadgeVariant,
-} from '../../shared/components/status-badge/status-badge';
+import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge';
+import { SignedCurrencyPipe } from '../../shared/pipes/signed-currency.pipe';
+import { TransactionStatusPipe } from '../../shared/pipes/transaction-status.pipe';
 
 const PAGE_SIZE = 10;
 
@@ -66,6 +66,9 @@ const EMPTY_RESULT: FilterResult = {
     PageHeaderComponent,
     ReactiveFormsModule,
     StatusBadgeComponent,
+    DatePipe,
+    SignedCurrencyPipe,
+    TransactionStatusPipe,
   ],
   templateUrl: './transactions-page.html',
   styleUrl: './transactions-page.scss',
@@ -220,41 +223,5 @@ export class TransactionsPageComponent implements OnInit {
 
   protected nextPage(): void {
     this.pageSubject.next(this.pageSubject.value + 1);
-  }
-
-  // ── Format helpers ────────────────────────────────────────
-  protected formatSignedCurrency(transaction: Transaction): string {
-    const prefix = transaction.type === 'credit' ? '+' : '-';
-    return `${prefix} ${this.formatCurrency(transaction.amount)}`;
-  }
-
-  protected formatDate(value: string): string {
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    }).format(new Date(value));
-  }
-
-  protected statusLabel(status: Transaction['status']): string {
-    const labels: Record<Transaction['status'], string> = {
-      completed: 'Concluído',
-      processing: 'Processando',
-      scheduled: 'Agendado',
-    };
-    return labels[status];
-  }
-
-  protected statusVariant(status: Transaction['status']): StatusBadgeVariant {
-    const variants: Record<Transaction['status'], StatusBadgeVariant> = {
-      completed: 'success',
-      processing: 'info',
-      scheduled: 'warning',
-    };
-    return variants[status];
-  }
-
-  private formatCurrency(value: number): string {
-    return new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency' }).format(value);
   }
 }

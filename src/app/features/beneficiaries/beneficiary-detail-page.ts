@@ -1,12 +1,12 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 
-import { Beneficiary } from '../../core/models/banking';
 import {
   deleteBeneficiary,
   loadBeneficiaries,
@@ -25,13 +25,12 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header';
-import {
-  StatusBadgeComponent,
-  StatusBadgeVariant,
-} from '../../shared/components/status-badge/status-badge';
+import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge';
+import { BeneficiaryStatusPipe } from '../../shared/pipes/beneficiary-status.pipe';
 
 @Component({
   selector: 'app-beneficiary-detail-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     EmptyStateComponent,
@@ -42,6 +41,8 @@ import {
     PageHeaderComponent,
     RouterLink,
     StatusBadgeComponent,
+    BeneficiaryStatusPipe,
+    DatePipe,
   ],
   template: `
     <app-page-header
@@ -106,14 +107,12 @@ import {
         </div>
         <div>
           <span>Status</span>
-          <app-status-badge
-            [label]="statusLabel(beneficiary()?.status ?? 'pending')"
-            [variant]="statusVariant(beneficiary()?.status ?? 'pending')"
-          />
+          @let status = beneficiary()?.status ?? 'pending' | beneficiaryStatus;
+          <app-status-badge [label]="status.label" [variant]="status.variant" />
         </div>
         <div>
           <span>Cadastro</span>
-          <strong>{{ formatDate(beneficiary()?.createdAt ?? '') }}</strong>
+          <strong>{{ beneficiary()?.createdAt | date: 'dd MMM yyyy' }}</strong>
         </div>
       </section>
     }
@@ -149,6 +148,7 @@ export class BeneficiaryDetailPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly store = inject(Store);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly beneficiaryId = this.route.snapshot.paramMap.get('id') ?? '';
 
@@ -190,31 +190,12 @@ export class BeneficiaryDetailPageComponent implements OnInit {
     this.dialog
       .open(ConfirmDialogComponent, { data, width: '22rem' })
       .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((confirmed: boolean | undefined) => {
         if (confirmed) {
           this.store.dispatch(deleteBeneficiary({ id: beneficiary.id }));
           void this.router.navigate(['/app/beneficiaries']);
         }
       });
-  }
-
-  protected statusLabel(status: Beneficiary['status']): string {
-    return status === 'active' ? 'Ativo' : 'Pendente';
-  }
-
-  protected statusVariant(status: Beneficiary['status']): StatusBadgeVariant {
-    return status === 'active' ? 'success' : 'warning';
-  }
-
-  protected formatDate(value: string): string {
-    if (!value) {
-      return '';
-    }
-
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    }).format(new Date(value));
   }
 }
