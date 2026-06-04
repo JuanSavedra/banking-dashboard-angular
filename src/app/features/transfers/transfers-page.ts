@@ -1,86 +1,194 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
+import { Beneficiary, Transfer } from '../../core/models/banking';
+import { BeneficiariesService } from '../../core/services/beneficiaries';
+import { TransfersService } from '../../core/services/transfers';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
+import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
+import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge';
 
 @Component({
   selector: 'app-transfers-page',
   standalone: true,
-  imports: [PageHeaderComponent, StatusBadgeComponent],
+  imports: [
+    EmptyStateComponent,
+    ErrorStateComponent,
+    LoadingStateComponent,
+    MatButtonModule,
+    MatIconModule,
+    PageHeaderComponent,
+    StatusBadgeComponent,
+  ],
   template: `
     <app-page-header
       eyebrow="Transferência"
       title="Transferência Pix"
-      description="Fluxo simulado com favorecido, valor, revisão e comprovante será implementado com formulários."
+      description="Chamada demo para POST /api/transfers com comprovante fake."
     />
 
-    <section class="steps" aria-label="Etapas planejadas da transferência">
-      @for (step of steps; track step.title) {
-        <article>
-          <span>{{ step.order }}</span>
-          <h2>{{ step.title }}</h2>
-          <p>{{ step.description }}</p>
-          <app-status-badge label="Planejado" variant="neutral" />
-        </article>
+    @if (loading()) {
+      <app-loading-state label="Carregando favorecidos para transferência" [rows]="4" />
+    } @else if (error()) {
+      <app-error-state
+        title="Não foi possível preparar a transferência"
+        description="A API fake não retornou favorecidos disponíveis."
+        actionLabel="Recarregar favorecidos"
+        (action)="loadBeneficiaries()"
+      />
+    } @else if (!beneficiaries().length) {
+      <app-empty-state
+        icon="group_add"
+        title="Cadastre um favorecido"
+        description="A transferência demo precisa de um favorecido retornado pela API fake."
+      />
+    } @else {
+      <section class="transfer-panel" aria-label="Transferência demo">
+        <div>
+          <h2>Transferência demo</h2>
+          <p>Envia R$ 120,00 para {{ beneficiaries()[0].name }} e retorna um comprovante fake.</p>
+        </div>
+
+        <button
+          mat-flat-button
+          type="button"
+          [disabled]="submitting()"
+          (click)="createDemoTransfer()"
+        >
+          <mat-icon aria-hidden="true">send</mat-icon>
+          {{ submitting() ? 'Enviando' : 'Criar transferência demo' }}
+        </button>
+      </section>
+
+      @if (receipt()) {
+        <section class="receipt-panel" aria-label="Comprovante fake">
+          <app-status-badge label="Concluído" variant="success" />
+          <h2>Comprovante {{ receipt()?.receiptCode }}</h2>
+          <p>Valor: {{ formatCurrency(receipt()?.amount ?? 0) }}</p>
+          <p>Data: {{ formatDate(receipt()?.createdAt ?? '') }}</p>
+        </section>
       }
-    </section>
+    }
   `,
   styles: [
     `
-      .steps {
+      .transfer-panel,
+      .receipt-panel {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
         gap: var(--app-space-4);
-      }
-
-      article {
         padding: var(--app-space-5);
         border: var(--app-border-subtle);
         border-radius: var(--app-radius-lg);
         background: var(--app-color-background);
       }
 
-      article > span {
-        color: var(--app-color-primary);
-        font-size: var(--app-font-size-label);
-        font-weight: 800;
+      .transfer-panel {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+      }
+
+      .receipt-panel {
+        margin-top: var(--app-space-4);
       }
 
       h2 {
-        margin: var(--app-space-3) 0 var(--app-space-2);
+        margin: 0;
         font-size: var(--app-font-size-title);
       }
 
       p {
-        min-height: 3rem;
-        margin: 0 0 var(--app-space-4);
+        margin: var(--app-space-2) 0 0;
         color: var(--app-color-muted);
-        line-height: 1.6;
+      }
+
+      @media (max-width: 48rem) {
+        .transfer-panel {
+          grid-template-columns: 1fr;
+        }
       }
     `,
   ],
 })
-export class TransfersPageComponent {
-  protected readonly steps = [
-    {
-      order: '01',
-      title: 'Favorecido',
-      description: 'Selecionar contato ou informar chave Pix.',
-    },
-    {
-      order: '02',
-      title: 'Valor',
-      description: 'Informar valor, descrição e validar saldo.',
-    },
-    {
-      order: '03',
-      title: 'Revisão',
-      description: 'Confirmar dados antes da operação sensível.',
-    },
-    {
-      order: '04',
-      title: 'Comprovante',
-      description: 'Exibir resultado e comprovante simulado.',
-    },
-  ];
+export class TransfersPageComponent implements OnInit {
+  private readonly beneficiariesService = inject(BeneficiariesService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly transfersService = inject(TransfersService);
+
+  protected readonly beneficiaries = signal<Beneficiary[]>([]);
+  protected readonly error = signal(false);
+  protected readonly loading = signal(true);
+  protected readonly receipt = signal<Transfer | null>(null);
+  protected readonly submitting = signal(false);
+
+  ngOnInit(): void {
+    this.loadBeneficiaries();
+  }
+
+  protected loadBeneficiaries(): void {
+    this.loading.set(true);
+    this.error.set(false);
+
+    this.beneficiariesService
+      .getBeneficiaries()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (beneficiaries) => {
+          this.beneficiaries.set(beneficiaries);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+          this.error.set(true);
+        },
+      });
+  }
+
+  protected createDemoTransfer(): void {
+    const beneficiary = this.beneficiaries()[0];
+
+    if (!beneficiary) {
+      return;
+    }
+
+    this.submitting.set(true);
+    this.transfersService
+      .createTransfer({
+        beneficiaryId: beneficiary.id,
+        amount: 120,
+        description: 'Transferência demo da Fase 4',
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (transfer) => {
+          this.receipt.set(transfer);
+          this.submitting.set(false);
+        },
+        error: () => {
+          this.submitting.set(false);
+          this.error.set(true);
+        },
+      });
+  }
+
+  protected formatCurrency(value: number): string {
+    return new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency' }).format(value);
+  }
+
+  protected formatDate(value: string): string {
+    if (!value) {
+      return '';
+    }
+
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }).format(new Date(value));
+  }
 }

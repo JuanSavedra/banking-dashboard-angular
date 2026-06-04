@@ -6,7 +6,7 @@
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 22rem;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--app-space-4);
   margin-top: var(--app-space-4);
 }
@@ -72,27 +72,14 @@
   white-space: nowrap;
 }
 
-.state-panel {
-  display: grid;
-  gap: var(--app-space-4);
-}
-
 @media (max-width: 64rem) {
   .summary-grid,
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-
-  .state-panel {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 48rem) {
-  .state-panel {
-    grid-template-columns: 1fr;
-  }
-
   .activity-list li {
     display: grid;
   }

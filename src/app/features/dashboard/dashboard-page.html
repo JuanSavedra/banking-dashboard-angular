@@ -1,7 +1,7 @@
 <app-page-header
   eyebrow="Dashboard"
   title="Visão financeira"
-  description="Resumo visual da conta, preparado para receber dados reais na fase de API fake."
+  description="Resumo da conta e movimentações recentes carregadas pela API fake."
 >
   <button pageHeaderActions mat-flat-button type="button">
     <mat-icon aria-hidden="true">add</mat-icon>
@@ -9,56 +9,66 @@
   </button>
 </app-page-header>
 
-<section class="summary-grid" aria-label="Resumo financeiro">
-  @for (summary of summaries; track summary.label) {
-    <app-summary-card
-      [label]="summary.label"
-      [value]="summary.value"
-      [description]="summary.description"
-      [icon]="summary.icon"
-      [tone]="summary.tone"
-    />
-  }
-</section>
+@if (loading()) {
+  <app-loading-state label="Carregando dashboard" [rows]="5" />
+} @else if (error()) {
+  <app-error-state
+    title="Não foi possível carregar o dashboard"
+    description="Confira a API fake e tente novamente."
+    actionLabel="Recarregar dashboard"
+    (action)="loadDashboard()"
+  />
+} @else if (!account()) {
+  <app-empty-state
+    icon="account_balance"
+    title="Conta não encontrada"
+    description="A API fake não retornou dados de conta para o usuário autenticado."
+  />
+} @else {
+  <section class="summary-grid" aria-label="Resumo financeiro">
+    @for (summary of summaries(); track summary.label) {
+      <app-summary-card
+        [label]="summary.label"
+        [value]="summary.value"
+        [description]="summary.description"
+        [icon]="summary.icon"
+        [tone]="summary.tone"
+      />
+    }
+  </section>
 
-<section class="dashboard-grid">
-  <article class="activity-panel" aria-labelledby="activity-title">
-    <div class="panel-heading">
-      <div>
-        <h2 id="activity-title">Atividade recente</h2>
-        <p>Dados estáticos para validar navegação e hierarquia.</p>
+  <section class="dashboard-grid">
+    <article class="activity-panel" aria-labelledby="activity-title">
+      <div class="panel-heading">
+        <div>
+          <h2 id="activity-title">Atividade recente</h2>
+          <p>Últimas movimentações retornadas pela API fake.</p>
+        </div>
+        <app-status-badge label="API fake" variant="info" />
       </div>
-      <app-status-badge label="Fake" variant="neutral" />
-    </div>
 
-    <ul class="activity-list">
-      @for (activity of activities; track activity.description) {
-        <li>
-          <div>
-            <strong>{{ activity.description }}</strong>
-            <span>{{ activity.detail }}</span>
-          </div>
-          <div class="activity-list__meta">
-            <strong>{{ activity.amount }}</strong>
-            <app-status-badge [label]="activity.badge" [variant]="activity.variant" />
-          </div>
-        </li>
+      @if (activities().length) {
+        <ul class="activity-list">
+          @for (activity of activities(); track activity.description) {
+            <li>
+              <div>
+                <strong>{{ activity.description }}</strong>
+                <span>{{ activity.detail }}</span>
+              </div>
+              <div class="activity-list__meta">
+                <strong>{{ activity.amount }}</strong>
+                <app-status-badge [label]="activity.badge" [variant]="activity.variant" />
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <app-empty-state
+          icon="receipt_long"
+          title="Sem movimentações recentes"
+          description="As transações aparecerão aqui quando a API fake retornar lançamentos."
+        />
       }
-    </ul>
-  </article>
-
-  <aside class="state-panel" aria-label="Estados compartilhados">
-    <app-loading-state label="Carregando extrato" />
-    <app-empty-state
-      icon="group_add"
-      title="Nenhum favorecido recente"
-      description="Cadastre um favorecido para acelerar próximas transferências Pix."
-      actionLabel="Adicionar"
-    />
-    <app-error-state
-      title="Limite indisponível"
-      description="A consulta de limite será exibida quando a API fake estiver ativa."
-      actionLabel="Atualizar"
-    />
-  </aside>
-</section>
+    </article>
+  </section>
+}
