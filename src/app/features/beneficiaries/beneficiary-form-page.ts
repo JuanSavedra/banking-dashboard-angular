@@ -8,7 +8,12 @@ import {
   OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,7 +25,14 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs';
 
-import { Beneficiary, BeneficiaryStatus } from '../../core/models/banking';
+import { BeneficiaryStatus } from '../../core/models/banking';
+import { maskCnpj, maskCpf, maskCpfCnpj, maskPhone } from '../../core/utils/masks';
+import {
+  cpfOrCnpjValidator,
+  detectPixKeyType,
+  PixKeyType,
+  pixKeyValidator,
+} from '../../core/validators/document.validators';
 import {
   createBeneficiary,
   createBeneficiarySuccess,
@@ -105,25 +117,43 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
 
           <mat-form-field appearance="outline">
             <mat-label>Documento</mat-label>
-            <input matInput formControlName="document" autocomplete="off" />
+            <input matInput formControlName="document" inputmode="numeric" autocomplete="off" />
             @if (form.controls.document.hasError('required') && form.controls.document.touched) {
               <mat-error>Informe CPF ou CNPJ.</mat-error>
             } @else if (
-              form.controls.document.hasError('minlength') && form.controls.document.touched
+              form.controls.document.hasError('document') && form.controls.document.touched
             ) {
-              <mat-error>Documento deve ter pelo menos 11 caracteres.</mat-error>
+              <mat-error>CPF ou CNPJ inválido.</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
+            <mat-label>Tipo de chave Pix</mat-label>
+            <mat-select formControlName="pixKeyType">
+              @for (type of pixKeyTypes; track type.value) {
+                <mat-option [value]="type.value">{{ type.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
             <mat-label>Chave Pix</mat-label>
-            <input matInput formControlName="pixKey" autocomplete="off" />
+            <input
+              matInput
+              formControlName="pixKey"
+              [attr.inputmode]="
+                form.controls.pixKeyType.value === 'email'
+                  ? 'email'
+                  : form.controls.pixKeyType.value === 'aleatoria'
+                    ? 'text'
+                    : 'numeric'
+              "
+              autocomplete="off"
+            />
             @if (form.controls.pixKey.hasError('required') && form.controls.pixKey.touched) {
               <mat-error>Informe a chave Pix.</mat-error>
-            } @else if (
-              form.controls.pixKey.hasError('minlength') && form.controls.pixKey.touched
-            ) {
-              <mat-error>Chave Pix deve ter pelo menos 5 caracteres.</mat-error>
+            } @else if (form.controls.pixKey.hasError('pix') && form.controls.pixKey.touched) {
+              <mat-error>Chave Pix inválida para o tipo selecionado.</mat-error>
             }
           </mat-form-field>
 
@@ -237,11 +267,20 @@ export class BeneficiaryFormPageComponent implements OnInit {
     initialValue: false,
   });
 
+  protected readonly pixKeyTypes: { value: PixKeyType; label: string }[] = [
+    { value: 'celular', label: 'Celular' },
+    { value: 'cpf', label: 'CPF' },
+    { value: 'cnpj', label: 'CNPJ' },
+    { value: 'email', label: 'E-mail' },
+    { value: 'aleatoria', label: 'Chave aleatória' },
+  ];
+
   protected readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
     bank: ['', Validators.required],
-    document: ['', [Validators.required, Validators.minLength(11)]],
-    pixKey: ['', [Validators.required, Validators.minLength(5)]],
+    document: ['', [Validators.required, cpfOrCnpjValidator]],
+    pixKeyType: ['celular' as PixKeyType, Validators.required],
+    pixKey: ['', [Validators.required, pixKeyValidator('celular')]],
     status: ['active' as BeneficiaryStatus],
   });
 
@@ -253,7 +292,9 @@ export class BeneficiaryFormPageComponent implements OnInit {
         return;
       }
 
+      // pixKeyType primeiro: ajusta o validador/máscara antes de popular a chave.
       this.form.patchValue({
+        pixKeyType: detectPixKeyType(beneficiary.pixKey),
         name: beneficiary.name,
         bank: beneficiary.bank,
         document: beneficiary.document,
@@ -261,6 +302,41 @@ export class BeneficiaryFormPageComponent implements OnInit {
         status: beneficiary.status,
       });
     });
+
+    this.form.controls.document.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.applyMask(this.form.controls.document, maskCpfCnpj(value)));
+
+    this.form.controls.pixKey.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.applyMask(this.form.controls.pixKey, this.maskPixKey(value)));
+
+    this.form.controls.pixKeyType.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((type) => {
+        this.form.controls.pixKey.setValidators([Validators.required, pixKeyValidator(type)]);
+        this.applyMask(this.form.controls.pixKey, this.maskPixKey(this.form.controls.pixKey.value));
+        this.form.controls.pixKey.updateValueAndValidity();
+      });
+  }
+
+  private maskPixKey(value: string): string {
+    switch (this.form.controls.pixKeyType.value) {
+      case 'celular':
+        return maskPhone(value);
+      case 'cpf':
+        return maskCpf(value);
+      case 'cnpj':
+        return maskCnpj(value);
+      default:
+        return value;
+    }
+  }
+
+  private applyMask(control: FormControl<string>, masked: string): void {
+    if (masked !== control.value) {
+      control.setValue(masked, { emitEvent: false });
+    }
   }
 
   ngOnInit(): void {
@@ -289,10 +365,11 @@ export class BeneficiaryFormPageComponent implements OnInit {
           void this.router.navigate(['/app/beneficiaries', beneficiary.id]);
         });
 
+      const { name, bank, document, pixKey, status } = value;
       this.store.dispatch(
         updateBeneficiary({
           id: this.beneficiaryId,
-          payload: value,
+          payload: { name, bank, document, pixKey, status },
         }),
       );
       return;
