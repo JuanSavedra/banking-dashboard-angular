@@ -3,6 +3,7 @@ export type TransactionStatus = 'completed' | 'scheduled' | 'processing';
 export type BeneficiaryStatus = 'active' | 'pending';
 export type CardStatus = 'active' | 'blocked';
 export type CardType = 'physical' | 'virtual';
+export type CardPurchaseStatus = 'approved' | 'processing';
 export type TransferStatus = 'completed' | 'scheduled';
 
 export interface ApiResponse<T> {
@@ -89,6 +90,16 @@ export interface Card {
   limit: number;
   availableLimit: number;
   dueDay: number;
+  recentPurchases: CardPurchase[];
+}
+
+export interface CardPurchase {
+  id: string;
+  description: string;
+  merchant: string;
+  amount: number;
+  status: CardPurchaseStatus;
+  occurredAt: string;
 }
 
 export interface UpdateCardPayload {

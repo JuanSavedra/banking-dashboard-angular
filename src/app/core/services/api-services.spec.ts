@@ -156,10 +156,21 @@ describe('API services', () => {
       limit: 6500,
       availableLimit: 4800,
       dueDay: 10,
+      recentPurchases: [
+        {
+          id: 'pur-001',
+          description: 'Mercado',
+          merchant: 'Mercado Central',
+          amount: 241.35,
+          status: 'approved',
+          occurredAt: '2026-06-02T21:10:00.000Z',
+        },
+      ],
     };
 
     service.getCards().subscribe((result) => {
       expect(result).toEqual([card]);
+      expect(result[0].recentPurchases.length).toBe(1);
     });
 
     httpTesting.expectOne('/api/cards').flush({ data: [card] });

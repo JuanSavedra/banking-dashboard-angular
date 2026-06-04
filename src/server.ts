@@ -121,6 +121,32 @@ let cards: Card[] = [
     limit: 6500,
     availableLimit: 4800,
     dueDay: 10,
+    recentPurchases: [
+      {
+        id: 'pur-4482-001',
+        description: 'Assinatura mensal',
+        merchant: 'Cloud Finance',
+        amount: 89.9,
+        status: 'approved',
+        occurredAt: '2026-06-03T18:22:00.000Z',
+      },
+      {
+        id: 'pur-4482-002',
+        description: 'Mercado',
+        merchant: 'Mercado Central',
+        amount: 241.35,
+        status: 'approved',
+        occurredAt: '2026-06-02T21:10:00.000Z',
+      },
+      {
+        id: 'pur-4482-003',
+        description: 'Aplicativo de transporte',
+        merchant: 'Mobilidade Urbana',
+        amount: 32.8,
+        status: 'processing',
+        occurredAt: '2026-06-01T23:40:00.000Z',
+      },
+    ],
   },
   {
     id: 'card-2190',
@@ -131,6 +157,16 @@ let cards: Card[] = [
     limit: 2500,
     availableLimit: 2500,
     dueDay: 10,
+    recentPurchases: [
+      {
+        id: 'pur-2190-001',
+        description: 'Compra online',
+        merchant: 'Livraria Digital',
+        amount: 126.4,
+        status: 'approved',
+        occurredAt: '2026-05-30T14:25:00.000Z',
+      },
+    ],
   },
 ];
 
