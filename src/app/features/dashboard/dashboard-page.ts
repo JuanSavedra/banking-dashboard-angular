@@ -1,12 +1,22 @@
-import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { forkJoin } from 'rxjs';
+import { Store } from '@ngrx/store';
 
-import { Account, Transaction } from '../../core/models/banking';
-import { AccountService } from '../../core/services/account';
-import { TransactionsService } from '../../core/services/transactions';
+import { Transaction } from '../../core/models/banking';
+import { loadAccount } from '../../core/store/account/account.actions';
+import {
+  selectAccount,
+  selectAccountError,
+  selectAccountLoading,
+} from '../../core/store/account/account.selectors';
+import { loadTransactions } from '../../core/store/transactions/transactions.actions';
+import {
+  selectAllTransactions,
+  selectTransactionsError,
+  selectTransactionsLoading,
+} from '../../core/store/transactions/transactions.selectors';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state';
@@ -53,14 +63,31 @@ interface ActivityItem {
   styleUrl: './dashboard-page.scss',
 })
 export class DashboardPageComponent implements OnInit {
-  private readonly accountService = inject(AccountService);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly transactionsService = inject(TransactionsService);
+  private readonly store = inject(Store);
 
-  protected readonly account = signal<Account | null>(null);
-  protected readonly error = signal(false);
-  protected readonly loading = signal(true);
-  protected readonly transactions = signal<Transaction[]>([]);
+  private readonly accountLoading = toSignal(this.store.select(selectAccountLoading), {
+    initialValue: true,
+  });
+  private readonly accountError = toSignal(this.store.select(selectAccountError), {
+    initialValue: false,
+  });
+  private readonly transactionsLoading = toSignal(
+    this.store.select(selectTransactionsLoading),
+    { initialValue: true },
+  );
+  private readonly transactionsError = toSignal(
+    this.store.select(selectTransactionsError),
+    { initialValue: false },
+  );
+
+  protected readonly account = toSignal(this.store.select(selectAccount));
+  protected readonly transactions = toSignal(this.store.select(selectAllTransactions), {
+    initialValue: [],
+  });
+  protected readonly loading = computed(
+    () => this.accountLoading() || this.transactionsLoading(),
+  );
+  protected readonly error = computed(() => this.accountError() || this.transactionsError());
 
   protected readonly summaries = computed<DashboardSummary[]>(() => {
     const account = this.account();
@@ -111,25 +138,8 @@ export class DashboardPageComponent implements OnInit {
   }
 
   protected loadDashboard(): void {
-    this.loading.set(true);
-    this.error.set(false);
-
-    forkJoin({
-      account: this.accountService.getAccount(),
-      transactions: this.transactionsService.getTransactions(),
-    })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: ({ account, transactions }) => {
-          this.account.set(account);
-          this.transactions.set(transactions);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.loading.set(false);
-          this.error.set(true);
-        },
-      });
+    this.store.dispatch(loadAccount());
+    this.store.dispatch(loadTransactions());
   }
 
   private formatCurrency(value: number): string {
@@ -146,8 +156,8 @@ export class DashboardPageComponent implements OnInit {
   }
 
   private formatSignedCurrency(transaction: Transaction): string {
-    const signal = transaction.type === 'credit' ? '+' : '-';
-    return `${signal} ${this.formatCurrency(transaction.amount)}`;
+    const prefix = transaction.type === 'credit' ? '+' : '-';
+    return `${prefix} ${this.formatCurrency(transaction.amount)}`;
   }
 
   private statusLabel(status: Transaction['status']): string {

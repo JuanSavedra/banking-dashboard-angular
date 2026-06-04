@@ -1,11 +1,21 @@
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { Store } from '@ngrx/store';
 
-import { Beneficiary, Transfer } from '../../core/models/banking';
-import { BeneficiariesService } from '../../core/services/beneficiaries';
-import { TransfersService } from '../../core/services/transfers';
+import { loadBeneficiaries } from '../../core/store/beneficiaries/beneficiaries.actions';
+import {
+  selectAllBeneficiaries,
+  selectBeneficiariesError,
+  selectBeneficiariesLoading,
+} from '../../core/store/beneficiaries/beneficiaries.selectors';
+import { createTransfer } from '../../core/store/transfers/transfers.actions';
+import {
+  selectTransferError,
+  selectTransferReceipt,
+  selectTransferSubmitting,
+} from '../../core/store/transfers/transfers.selectors';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state';
@@ -114,37 +124,28 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
   ],
 })
 export class TransfersPageComponent implements OnInit {
-  private readonly beneficiariesService = inject(BeneficiariesService);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly transfersService = inject(TransfersService);
+  private readonly store = inject(Store);
 
-  protected readonly beneficiaries = signal<Beneficiary[]>([]);
-  protected readonly error = signal(false);
-  protected readonly loading = signal(true);
-  protected readonly receipt = signal<Transfer | null>(null);
-  protected readonly submitting = signal(false);
+  protected readonly beneficiaries = toSignal(this.store.select(selectAllBeneficiaries), {
+    initialValue: [],
+  });
+  protected readonly loading = toSignal(this.store.select(selectBeneficiariesLoading), {
+    initialValue: true,
+  });
+  protected readonly error = toSignal(this.store.select(selectBeneficiariesError), {
+    initialValue: false,
+  });
+  protected readonly receipt = toSignal(this.store.select(selectTransferReceipt));
+  protected readonly submitting = toSignal(this.store.select(selectTransferSubmitting), {
+    initialValue: false,
+  });
 
   ngOnInit(): void {
     this.loadBeneficiaries();
   }
 
   protected loadBeneficiaries(): void {
-    this.loading.set(true);
-    this.error.set(false);
-
-    this.beneficiariesService
-      .getBeneficiaries()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (beneficiaries) => {
-          this.beneficiaries.set(beneficiaries);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.loading.set(false);
-          this.error.set(true);
-        },
-      });
+    this.store.dispatch(loadBeneficiaries());
   }
 
   protected createDemoTransfer(): void {
@@ -154,24 +155,15 @@ export class TransfersPageComponent implements OnInit {
       return;
     }
 
-    this.submitting.set(true);
-    this.transfersService
-      .createTransfer({
-        beneficiaryId: beneficiary.id,
-        amount: 120,
-        description: 'Transferência demo da Fase 4',
-      })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (transfer) => {
-          this.receipt.set(transfer);
-          this.submitting.set(false);
+    this.store.dispatch(
+      createTransfer({
+        payload: {
+          beneficiaryId: beneficiary.id,
+          amount: 120,
+          description: 'Transferência demo da Fase 5',
         },
-        error: () => {
-          this.submitting.set(false);
-          this.error.set(true);
-        },
-      });
+      }),
+    );
   }
 
   protected formatCurrency(value: number): string {

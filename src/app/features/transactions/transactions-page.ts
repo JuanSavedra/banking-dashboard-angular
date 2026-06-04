@@ -1,8 +1,14 @@
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Store } from '@ngrx/store';
 
 import { Transaction } from '../../core/models/banking';
-import { TransactionsService } from '../../core/services/transactions';
+import { loadTransactions } from '../../core/store/transactions/transactions.actions';
+import {
+  selectAllTransactions,
+  selectTransactionsError,
+  selectTransactionsLoading,
+} from '../../core/store/transactions/transactions.selectors';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state';
@@ -118,39 +124,29 @@ import {
   ],
 })
 export class TransactionsPageComponent implements OnInit {
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly transactionsService = inject(TransactionsService);
+  private readonly store = inject(Store);
 
-  protected readonly error = signal(false);
-  protected readonly loading = signal(true);
-  protected readonly transactions = signal<Transaction[]>([]);
+  protected readonly transactions = toSignal(this.store.select(selectAllTransactions), {
+    initialValue: [],
+  });
+  protected readonly loading = toSignal(this.store.select(selectTransactionsLoading), {
+    initialValue: true,
+  });
+  protected readonly error = toSignal(this.store.select(selectTransactionsError), {
+    initialValue: false,
+  });
 
   ngOnInit(): void {
     this.loadTransactions();
   }
 
   protected loadTransactions(): void {
-    this.loading.set(true);
-    this.error.set(false);
-
-    this.transactionsService
-      .getTransactions()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (transactions) => {
-          this.transactions.set(transactions);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.loading.set(false);
-          this.error.set(true);
-        },
-      });
+    this.store.dispatch(loadTransactions());
   }
 
   protected formatSignedCurrency(transaction: Transaction): string {
-    const signal = transaction.type === 'credit' ? '+' : '-';
-    return `${signal} ${this.formatCurrency(transaction.amount)}`;
+    const prefix = transaction.type === 'credit' ? '+' : '-';
+    return `${prefix} ${this.formatCurrency(transaction.amount)}`;
   }
 
   protected formatDate(value: string): string {

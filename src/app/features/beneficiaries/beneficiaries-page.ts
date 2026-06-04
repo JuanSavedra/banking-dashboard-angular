@@ -1,11 +1,20 @@
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { Store } from '@ngrx/store';
 
 import { Beneficiary } from '../../core/models/banking';
-import { BeneficiariesService } from '../../core/services/beneficiaries';
+import {
+  createBeneficiary,
+  loadBeneficiaries,
+} from '../../core/store/beneficiaries/beneficiaries.actions';
+import {
+  selectAllBeneficiaries,
+  selectBeneficiariesError,
+  selectBeneficiariesLoading,
+} from '../../core/store/beneficiaries/beneficiaries.selectors';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state';
@@ -113,53 +122,37 @@ import {
   ],
 })
 export class BeneficiariesPageComponent implements OnInit {
-  private readonly beneficiariesService = inject(BeneficiariesService);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly store = inject(Store);
 
-  protected readonly beneficiaries = signal<Beneficiary[]>([]);
-  protected readonly error = signal(false);
-  protected readonly loading = signal(true);
+  protected readonly beneficiaries = toSignal(this.store.select(selectAllBeneficiaries), {
+    initialValue: [],
+  });
+  protected readonly loading = toSignal(this.store.select(selectBeneficiariesLoading), {
+    initialValue: true,
+  });
+  protected readonly error = toSignal(this.store.select(selectBeneficiariesError), {
+    initialValue: false,
+  });
 
   ngOnInit(): void {
     this.loadBeneficiaries();
   }
 
   protected loadBeneficiaries(): void {
-    this.loading.set(true);
-    this.error.set(false);
-
-    this.beneficiariesService
-      .getBeneficiaries()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (beneficiaries) => {
-          this.beneficiaries.set(beneficiaries);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.loading.set(false);
-          this.error.set(true);
-        },
-      });
+    this.store.dispatch(loadBeneficiaries());
   }
 
   protected createDemoBeneficiary(): void {
-    this.beneficiariesService
-      .createBeneficiary({
-        name: 'Contato Demo',
-        bank: 'Banco Operacional',
-        document: '111.222.333-44',
-        pixKey: 'contato-demo@email.dev',
-      })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (beneficiary) => {
-          this.beneficiaries.update((items) => [beneficiary, ...items]);
+    this.store.dispatch(
+      createBeneficiary({
+        payload: {
+          name: 'Contato Demo',
+          bank: 'Banco Operacional',
+          document: '111.222.333-44',
+          pixKey: 'contato-demo@email.dev',
         },
-        error: () => {
-          this.error.set(true);
-        },
-      });
+      }),
+    );
   }
 
   protected statusLabel(status: Beneficiary['status']): string {

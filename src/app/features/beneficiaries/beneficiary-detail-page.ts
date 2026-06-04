@@ -1,9 +1,15 @@
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
+import { Store } from '@ngrx/store';
 
 import { Beneficiary } from '../../core/models/banking';
-import { BeneficiariesService } from '../../core/services/beneficiaries';
+import { loadBeneficiaries } from '../../core/store/beneficiaries/beneficiaries.actions';
+import {
+  selectBeneficiariesError,
+  selectBeneficiariesLoading,
+  selectBeneficiaryById,
+} from '../../core/store/beneficiaries/beneficiaries.selectors';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state';
@@ -96,43 +102,27 @@ import {
   ],
 })
 export class BeneficiaryDetailPageComponent implements OnInit {
-  private readonly beneficiariesService = inject(BeneficiariesService);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
+  private readonly store = inject(Store);
 
-  protected readonly beneficiary = signal<Beneficiary | null>(null);
-  protected readonly error = signal(false);
-  protected readonly loading = signal(true);
+  private readonly beneficiaryId = this.route.snapshot.paramMap.get('id') ?? '';
+
+  protected readonly beneficiary = toSignal(
+    this.store.select(selectBeneficiaryById(this.beneficiaryId)),
+  );
+  protected readonly loading = toSignal(this.store.select(selectBeneficiariesLoading), {
+    initialValue: true,
+  });
+  protected readonly error = toSignal(this.store.select(selectBeneficiariesError), {
+    initialValue: false,
+  });
 
   ngOnInit(): void {
     this.loadBeneficiary();
   }
 
   protected loadBeneficiary(): void {
-    const beneficiaryId = this.route.snapshot.paramMap.get('id');
-
-    if (!beneficiaryId) {
-      this.loading.set(false);
-      this.error.set(true);
-      return;
-    }
-
-    this.loading.set(true);
-    this.error.set(false);
-
-    this.beneficiariesService
-      .getBeneficiary(beneficiaryId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (beneficiary) => {
-          this.beneficiary.set(beneficiary);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.loading.set(false);
-          this.error.set(true);
-        },
-      });
+    this.store.dispatch(loadBeneficiaries());
   }
 
   protected statusLabel(status: Beneficiary['status']): string {

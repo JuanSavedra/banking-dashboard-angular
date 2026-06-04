@@ -1,10 +1,16 @@
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { Store } from '@ngrx/store';
 
 import { Card } from '../../core/models/banking';
-import { CardsService } from '../../core/services/cards';
+import { loadCards, updateCard } from '../../core/store/cards/cards.actions';
+import {
+  selectAllCards,
+  selectCardsError,
+  selectCardsLoading,
+} from '../../core/store/cards/cards.selectors';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state';
@@ -139,52 +145,27 @@ import {
   ],
 })
 export class CardsPageComponent implements OnInit {
-  private readonly cardsService = inject(CardsService);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly store = inject(Store);
 
-  protected readonly cards = signal<Card[]>([]);
-  protected readonly error = signal(false);
-  protected readonly loading = signal(true);
+  protected readonly cards = toSignal(this.store.select(selectAllCards), { initialValue: [] });
+  protected readonly loading = toSignal(this.store.select(selectCardsLoading), {
+    initialValue: true,
+  });
+  protected readonly error = toSignal(this.store.select(selectCardsError), {
+    initialValue: false,
+  });
 
   ngOnInit(): void {
     this.loadCards();
   }
 
   protected loadCards(): void {
-    this.loading.set(true);
-    this.error.set(false);
-
-    this.cardsService
-      .getCards()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (cards) => {
-          this.cards.set(cards);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.loading.set(false);
-          this.error.set(true);
-        },
-      });
+    this.store.dispatch(loadCards());
   }
 
   protected toggleStatus(card: Card): void {
     const status = card.status === 'active' ? 'blocked' : 'active';
-
-    this.cardsService
-      .updateCard(card.id, { status })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (updated) => {
-          this.cards.update((cards) =>
-            cards.map((item) => (item.id === updated.id ? updated : item)),
-          );
-        },
-        error: () => {
-          this.error.set(true);
-        },
-      });
+    this.store.dispatch(updateCard({ id: card.id, payload: { status } }));
   }
 
   protected formatCurrency(value: number): string {

@@ -1,12 +1,15 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { Store } from '@ngrx/store';
 
-import { AuthService } from '../../core/services/auth';
+import { login } from '../../core/store/auth/auth.actions';
+import { selectAuthError } from '../../core/store/auth/auth.selectors';
 
 @Component({
   selector: 'app-login-page',
@@ -22,12 +25,13 @@ import { AuthService } from '../../core/services/auth';
   styleUrl: './login-page.scss',
 })
 export class LoginPageComponent {
-  private readonly authService = inject(AuthService);
   private readonly formBuilder = inject(NonNullableFormBuilder);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
+  private readonly store = inject(Store);
 
-  protected readonly hasInvalidCredentials = signal(false);
+  protected readonly hasInvalidCredentials = toSignal(this.store.select(selectAuthError), {
+    initialValue: false,
+  });
 
   protected readonly form = this.formBuilder.group({
     identifier: ['', [Validators.required]],
@@ -35,26 +39,21 @@ export class LoginPageComponent {
   });
 
   protected submit(): void {
-    this.hasInvalidCredentials.set(false);
-
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    const authenticated = this.authService.login(this.form.getRawValue());
-
-    if (!authenticated) {
-      this.hasInvalidCredentials.set(true);
-      return;
-    }
-
-    void this.router.navigateByUrl(this.getReturnUrl());
+    this.store.dispatch(
+      login({
+        credentials: this.form.getRawValue(),
+        returnUrl: this.getReturnUrl(),
+      }),
+    );
   }
 
   private getReturnUrl(): string {
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-
     return returnUrl?.startsWith('/app') ? returnUrl : '/app/dashboard';
   }
 }
