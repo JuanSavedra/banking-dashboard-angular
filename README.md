@@ -4,9 +4,9 @@ Aplicação front-end bancária em Angular para consulta de saldo, extrato, cart
 
 ## Status do Projeto
 
-Fase atual: **Fase 11 — Acessibilidade**.
+Fase atual: **Fase 12 — Performance**.
 
-A Fase 11 revisa acessibilidade transversal: navegação por teclado, foco visível, semântica, estados anunciáveis e contraste. A documentação detalhada está em [docs/fase-11.md](docs/fase-11.md).
+A Fase 12 aplica otimizações conservadoras de performance com lazy loading, `OnPush`, listas rastreadas, análise de bundle e checklist Lighthouse. A documentação detalhada está em [docs/fase-12.md](docs/fase-12.md).
 
 ## Objetivo Técnico
 
@@ -91,6 +91,14 @@ A API roda no servidor Express do Angular SSR e expõe endpoints REST em `/api/*
 - Filtros, badges e estados usam texto explícito, sem depender apenas de cor.
 - Validação planejada com ESLint de templates, Lighthouse e axe DevTools.
 
+## Performance
+
+- Features carregadas sob demanda por `loadComponent`.
+- Componentes estáveis usam `ChangeDetectionStrategy.OnPush`.
+- Listas usam `@for` com `track` para reduzir recriação de DOM.
+- Estado reativo baseado em signals, computeds e selectors memoizados do NgRx.
+- Bundle acompanhado pelo `npm run build` e Lighthouse documentado para auditoria local.
+
 ## Credenciais de Acesso
 
 Use qualquer uma das opções abaixo para acessar o fluxo autenticado local:
@@ -111,3 +119,4 @@ Use qualquer uma das opções abaixo para acessar o fluxo autenticado local:
 - [docs/fase-9.md](docs/fase-9.md): CRUD de favorecidos com rotas e formulários.
 - [docs/fase-10.md](docs/fase-10.md): gestão de cartões, limites e compras recentes.
 - [docs/fase-11.md](docs/fase-11.md): acessibilidade transversal e checklist WCAG.
+- [docs/fase-12.md](docs/fase-12.md): performance, bundle e checklist Lighthouse.
