@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import {
   StatusBadgeComponent,
@@ -16,6 +16,7 @@ export interface ActivityItem {
 
 @Component({
   selector: 'app-recent-transactions',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [EmptyStateComponent, StatusBadgeComponent],
   template: `

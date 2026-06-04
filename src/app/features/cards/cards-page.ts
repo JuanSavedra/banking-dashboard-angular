@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl,
@@ -39,6 +39,7 @@ type LimitForm = FormGroup<{ availableLimit: FormControl<number> }>;
 
 @Component({
   selector: 'app-cards-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     EmptyStateComponent,

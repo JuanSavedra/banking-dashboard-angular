@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge';
 
 @Component({
   selector: 'app-profile-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [PageHeaderComponent, StatusBadgeComponent],
   template: `

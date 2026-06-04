@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 export type SummaryCardTone = 'positive' | 'negative' | 'neutral';
 
 @Component({
   selector: 'app-summary-card',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [MatIconModule],
   templateUrl: './summary-card.html',

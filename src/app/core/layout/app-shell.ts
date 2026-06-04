@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,6 +18,7 @@ interface NavigationItem {
 
 @Component({
   selector: 'app-shell',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [MatButtonModule, MatIconModule, RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './app-shell.html',

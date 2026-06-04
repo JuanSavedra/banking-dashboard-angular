@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
@@ -9,6 +9,7 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
 
 @Component({
   selector: 'app-not-found-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [MatButtonModule, PageHeaderComponent, RouterLink],
   template: `

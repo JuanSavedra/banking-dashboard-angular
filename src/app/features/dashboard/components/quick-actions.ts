@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 
@@ -10,6 +10,7 @@ interface QuickAction {
 
 @Component({
   selector: 'app-quick-actions',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [MatIconModule, RouterLink],
   template: `

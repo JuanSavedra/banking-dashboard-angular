@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-spending-chart',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   template: `
     <div class="spending-chart">
