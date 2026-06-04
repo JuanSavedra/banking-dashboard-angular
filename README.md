@@ -4,9 +4,9 @@ Aplicação front-end bancária em Angular que simula um dashboard financeiro co
 
 ## Status do Projeto
 
-Fase atual: **Fase 0 — Planejamento do projeto**.
+Fase atual: **Fase 4 — API fake e camada de serviços**.
 
-A Fase 0 define escopo, stack, entidades, telas e wireframes textuais antes de avançar para setup técnico e implementação de interface. A documentação detalhada está em [docs/fase-0.md](docs/fase-0.md).
+A Fase 4 conecta as telas principais a endpoints REST simulados no servidor SSR Express. A documentação detalhada está em [docs/fase-4.md](docs/fase-4.md).
 
 ## Objetivo Técnico
 
@@ -31,7 +31,7 @@ Demonstrar domínio de Angular moderno, rotas, formulários, API REST simulada, 
 - SCSS para tokens, tema, mixins e responsividade.
 - RxJS para fluxos assíncronos.
 - NgRx para gerenciamento de estado.
-- MSW para API fake.
+- Express SSR para API fake em `/api/*`.
 - Vitest via Angular builder para testes unitários.
 - Prettier para formatação.
 
@@ -73,6 +73,16 @@ npm run serve:ssr:banking-dashboard
 
 Serve o build SSR gerado.
 
+## API Fake
+
+A API fake roda no servidor Express do Angular SSR e expõe endpoints REST em `/api/*`:
+
+- `GET /api/account`
+- `GET /api/transactions` e `GET /api/transactions/:id`
+- `GET /api/beneficiaries`, `POST /api/beneficiaries`, `PUT /api/beneficiaries/:id`, `DELETE /api/beneficiaries/:id`
+- `POST /api/transfers`
+- `GET /api/cards` e `PUT /api/cards/:id`
+
 ## Credenciais Fake
 
 Use qualquer uma das opções abaixo para acessar o fluxo autenticado local:
@@ -89,3 +99,4 @@ Use qualquer uma das opções abaixo para acessar o fluxo autenticado local:
 - [docs/fase-1.md](docs/fase-1.md): setup técnico inicial e validações.
 - [docs/fase-2.md](docs/fase-2.md): design system, shell preview e componentes compartilhados.
 - [docs/fase-3.md](docs/fase-3.md): rotas, navegação real e autenticação fake.
+- [docs/fase-4.md](docs/fase-4.md): API fake, services HTTP e telas conectadas.
