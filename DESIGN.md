@@ -1,7 +1,63 @@
-<!-- SEED: re-run $impeccable document once there's code to capture the actual tokens and components. -->
 ---
 name: Banking Dashboard
 description: Dashboard bancário em Angular para demonstrar uma experiência financeira confiável, clara e precisa.
+colors:
+  background: '#ffffff'
+  surface: '#f7f8f5'
+  surface-strong: '#eef1e9'
+  surface-selected: '#edf4dc'
+  text: '#1f241d'
+  muted: '#5b6357'
+  border: '#dfe5d8'
+  primary: '#5f7f20'
+  primary-strong: '#45630f'
+  tertiary: '#6d5278'
+  success: '#1f7a4d'
+  warning: '#9a6200'
+  error: '#b42318'
+  info: '#2563eb'
+typography:
+  display:
+    fontFamily: "Roboto, 'Helvetica Neue', Arial, sans-serif"
+    fontSize: '2.5rem'
+    fontWeight: 700
+    lineHeight: 1.05
+  body:
+    fontFamily: "Roboto, 'Helvetica Neue', Arial, sans-serif"
+    fontSize: '1rem'
+    fontWeight: 400
+    lineHeight: 1.6
+  label:
+    fontFamily: "Roboto, 'Helvetica Neue', Arial, sans-serif"
+    fontSize: '0.8125rem'
+    fontWeight: 700
+    lineHeight: 1
+rounded:
+  sm: '0.375rem'
+  md: '0.5rem'
+  lg: '0.75rem'
+spacing:
+  xs: '0.25rem'
+  sm: '0.5rem'
+  md: '1rem'
+  lg: '1.5rem'
+  xl: '2rem'
+components:
+  button-primary:
+    backgroundColor: '{colors.primary}'
+    textColor: '{colors.background}'
+    rounded: '{rounded.md}'
+    padding: '0 1rem'
+  card:
+    backgroundColor: '{colors.background}'
+    textColor: '{colors.text}'
+    rounded: '{rounded.lg}'
+    padding: '1.25rem'
+  badge-neutral:
+    backgroundColor: '{colors.surface-strong}'
+    textColor: '{colors.muted}'
+    rounded: '{rounded.lg}'
+    padding: '0 0.75rem'
 ---
 
 # Design System: Banking Dashboard
@@ -10,68 +66,74 @@ description: Dashboard bancário em Angular para demonstrar uma experiência fin
 
 **Creative North Star: "A Mesa de Controle Financeiro."**
 
-O sistema deve parecer uma superfície de trabalho bancária bem calibrada: limpa, precisa, legível e pronta para decisões rápidas. A estética serve a tarefas concretas, não a marketing. O usuário deve conseguir conferir saldo, transações, cartões e transferências sem decifrar ornamentos visuais.
+O sistema visual é uma superfície bancária de trabalho: contida, objetiva e preparada para leitura rápida. A interface privilegia densidade organizada, hierarquia forte e estados explícitos. O visual serve à tomada de decisão financeira, não a impacto decorativo.
 
-A direção visual combina a clareza operacional do Stripe Dashboard, a densidade organizada do Linear e a simplicidade financeira do Nubank. O resultado não deve parecer um banco corporativo antigo, nem um template SaaS genérico com gradientes roxo/azul.
+A base implementada usa Angular Material como fundação acessível, com tokens próprios para cor, espaçamento, radius e motion. O shell preview estabelece sidebar fixa no desktop, topbar de operação e uma composição responsiva que valida o dashboard antes das rotas reais.
 
 **Key Characteristics:**
 
-- Informação financeira com hierarquia forte e ruído baixo.
-- Layouts densos, mas escaneáveis em desktop e mobile.
-- Estados de ação sempre explícitos: default, hover, focus, active, disabled, loading, success, warning e error.
-- Motion curta e funcional, usada para feedback e mudança de estado.
+- Superfícies neutras e acento oliva usado com moderação.
+- Cards e painéis flat by default, separados por borda e contraste tonal.
+- Tipografia sans única para títulos, labels, dados financeiros e microcopy.
+- Estados compartilhados para loading, empty, error, badges e confirmação.
 
 ## 2. Colors
 
-A estratégia de cor é **restrained**: neutros dominam a interface e o acento aparece apenas em ações primárias, seleção atual e estados relevantes. O seed de marca aponta para uma família olive/yellow-green, mas os valores finais devem ser resolvidos na Fase 2 em OKLCH e testados por contraste.
+A paleta é restrained: branco e superfícies neutras sustentam a experiência; oliva direciona ação e seleção; ameixa fica reservado para apoio visual pontual.
 
 ### Primary
 
-- **Oliva Operacional** ([to be resolved during implementation]): acento principal para ação primária, item ativo na navegação e elementos que precisam guiar o olhar.
+- **Oliva Operacional** (`#5f7f20`): ações primárias, item ativo na navegação, ícones de destaque e foco visual.
+- **Oliva Forte** (`#45630f`): hover, texto ativo e estados de seleção com maior contraste.
 
 ### Secondary
 
-- **Grafite de Confiança** ([to be resolved during implementation]): texto principal, ícones críticos e títulos de seções.
+- **Grafite de Confiança** (`#1f241d`): texto principal, títulos, valores financeiros e ícones críticos.
+- **Cinza Operacional** (`#5b6357`): descrições, metadados e textos secundários.
 
 ### Tertiary
 
-- **Ameixa Financeira** ([to be resolved during implementation]): acento secundário opcional para gráficos, badges especiais ou comparação visual, nunca para decoração solta.
+- **Ameixa Financeira** (`#6d5278`): acento secundário para gráficos ou agrupamentos especiais; não é decoração padrão.
 
 ### Neutral
 
-- **Branco de Trabalho** ([to be resolved during implementation]): fundo principal, preferencialmente puro ou quase puro, sem creme/bege artificial.
-- **Superfície Técnica** ([to be resolved during implementation]): painéis, sidebar, tabelas e áreas agrupadas.
-- **Linha Discreta** ([to be resolved during implementation]): divisórias, bordas de inputs e separadores de dados.
+- **Branco de Trabalho** (`#ffffff`): fundo de cards, painéis e áreas de leitura.
+- **Superfície Técnica** (`#f7f8f5`): fundo geral do aplicativo.
+- **Linha Discreta** (`#dfe5d8`): bordas, divisórias e separação de painéis.
 
 ### Named Rules
 
-**The Restrained Finance Rule.** A cor de marca ocupa pouco espaço; sua raridade dá peso às ações importantes.
+**The Restrained Finance Rule.** O acento oliva aparece em ações, seleção e foco; se ele começa a decorar a tela inteira, está errado.
 
-**The No Generic Fintech Rule.** Azul-marinho com dourado e gradientes roxo/azul genéricos são proibidos.
+**The No Generic Fintech Rule.** Azul-marinho com dourado, gradientes roxo/azul e glassmorphism decorativo são proibidos.
 
 ## 3. Typography
 
-**Display Font:** [font family to be chosen at implementation]
-**Body Font:** [single sans family to be chosen at implementation]
-**Label/Mono Font:** [optional mono to be chosen at implementation]
+**Display Font:** Roboto com fallback `'Helvetica Neue', Arial, sans-serif`
+**Body Font:** Roboto com fallback `'Helvetica Neue', Arial, sans-serif`
+**Label/Mono Font:** Não há fonte mono definida nesta fase.
 
-**Character:** Tipografia de produto, não editorial. Uma família sans bem ajustada deve carregar títulos, labels, tabelas, botões e textos longos com consistência.
+**Character:** Tipografia de produto: familiar, densa e legível. Uma família única reduz ruído e mantém consistência entre navegação, cards, badges, estados e dados financeiros.
 
 ### Hierarchy
 
-- **Display** ([to be resolved]): usado com parcimônia em login ou páginas vazias importantes.
-- **Headline** ([to be resolved]): títulos de páginas como Dashboard, Extrato e Cartões.
-- **Title** ([to be resolved]): cabeçalhos de painéis, cards e seções internas.
-- **Body** ([to be resolved]): textos de apoio, mensagens e descrições; limitar prose a 65-75ch.
-- **Label** ([to be resolved]): botões, filtros, campos, badges e metadados financeiros.
+- **Display** (700, `2.5rem`, 1.05): títulos principais de página.
+- **Headline** (700, `1.75rem`, 1.15): títulos de seções importantes.
+- **Title** (700, `1.125rem`, 1.25): cabeçalhos de cards e painéis.
+- **Body** (400, `1rem`, 1.6): descrições e textos de apoio.
+- **Label** (700, `0.8125rem`, 1): badges, navegação, metadados e rótulos compactos.
 
 ### Named Rules
 
-**The Product Type Rule.** Não use fontes display em labels, botões, tabelas ou dados financeiros.
+**The Product Type Rule.** Não use fontes display em labels, botões, tabelas ou valores financeiros.
 
 ## 4. Elevation
 
-Elevação deve ser flat by default. Profundidade vem de contraste tonal, bordas discretas, agrupamento e densidade bem controlada. Sombras aparecem apenas em estados interativos ou overlays, nunca como decoração permanente.
+O sistema é flat by default. Profundidade é criada por bordas, superfícies tonais e agrupamento. Sombras só aparecem como resposta de foco ou overlay, não como decoração permanente.
+
+### Shadow Vocabulary
+
+- **Focus Ring** (`0 0 0 3px rgba(95, 127, 32, 0.24)`): feedback de foco em elementos interativos.
 
 ### Named Rules
 
@@ -81,39 +143,45 @@ Elevação deve ser flat by default. Profundidade vem de contraste tonal, bordas
 
 ### Buttons
 
-- **Shape:** cantos discretos, com raio final resolvido na Fase 2.
-- **Primary:** reservado para ações financeiras principais, como Entrar, Transferir e Salvar alterações.
-- **Hover / Focus:** feedback visível, contraste preservado e foco por teclado evidente.
-- **Loading / Disabled:** estado textual e visual explícito; nunca ocultar a ação atrás de um spinner isolado.
+- **Shape:** cantos discretos (`0.5rem`).
+- **Primary:** Material flat button com oliva operacional e texto branco.
+- **Hover / Focus:** foco visível com ring oliva; hover não muda a estrutura do layout.
+- **Secondary / Ghost:** Material button textual para ações secundárias.
+
+### Chips
+
+- **Style:** badges arredondados com fundo tonal e texto forte.
+- **State:** variantes `success`, `warning`, `error`, `info` e `neutral`.
 
 ### Cards / Containers
 
-- **Corner Style:** moderado e consistente.
-- **Background:** superfícies neutras; cards não devem substituir hierarquia de página.
-- **Shadow Strategy:** seguir a elevação flat by default.
-- **Internal Padding:** denso o suficiente para dashboard, sem apertar dados tabulares.
+- **Corner Style:** radius moderado (`0.75rem`).
+- **Background:** branco de trabalho sobre superfície técnica.
+- **Shadow Strategy:** sem sombra em repouso.
+- **Border:** linha discreta (`#dfe5d8`) para separar conteúdo.
+- **Internal Padding:** `1.25rem` para cards, `1.5rem` para estados.
 
 ### Inputs / Fields
 
-- **Style:** campos previsíveis, com label claro, ajuda quando necessário e erro próximo ao campo.
+- **Style:** seguem Angular Material quando implementados em fases futuras.
 - **Focus:** foco forte e acessível.
-- **Error / Disabled:** não depender só de cor; incluir texto e semântica.
+- **Error / Disabled:** estado textual e visual, nunca apenas cor.
 
 ### Navigation
 
-- **Style:** shell com sidebar/topbar previsíveis para app bancário.
-- **Active State:** o item ativo deve ser óbvio por cor, peso e/ou marcador estrutural.
-- **Mobile Treatment:** navegação colapsada sem perder acesso às rotas principais.
+- **Style:** sidebar fixa no desktop, topbar operacional no conteúdo.
+- **Active State:** fundo oliva suave e texto oliva forte.
+- **Mobile Treatment:** sidebar vira menu acionável pela topbar.
 
 ## 6. Do's and Don'ts
 
 ### Do:
 
-- **Do** priorizar clareza operacional em saldo, transações, cartões e transferências.
-- **Do** usar componentes consistentes entre telas, com estados completos.
-- **Do** validar contraste WCAG AA antes de fixar tokens.
-- **Do** escrever microcopy em pt-BR direta, com verbos de ação claros.
-- **Do** usar skeletons e empty states instrutivos para loading e ausência de dados.
+- **Do** usar os tokens em `src/styles/_tokens.scss` antes de criar valores novos.
+- **Do** manter o acento oliva reservado para ação, seleção e foco.
+- **Do** validar contraste WCAG AA em textos, badges e botões.
+- **Do** usar componentes compartilhados para estados recorrentes.
+- **Do** manter o shell denso, escaneável e responsivo.
 
 ### Don't:
 

@@ -76,6 +76,7 @@ Serve o build SSR gerado.
 ## Diretrizes de Produto e Design
 
 - [PRODUCT.md](PRODUCT.md): estratégia, público, propósito, personalidade e princípios do produto.
-- [DESIGN.md](DESIGN.md): seed do sistema visual para orientar a criação da interface.
+- [DESIGN.md](DESIGN.md): sistema visual com tokens e componentes da interface.
 - [docs/fase-0.md](docs/fase-0.md): escopo fechado da Fase 0.
 - [docs/fase-1.md](docs/fase-1.md): setup técnico inicial e validações.
+- [docs/fase-2.md](docs/fase-2.md): design system, shell preview e componentes compartilhados.
