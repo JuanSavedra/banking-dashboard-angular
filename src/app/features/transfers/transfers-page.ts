@@ -103,10 +103,9 @@ export class TransfersPageComponent implements OnInit {
   // ── Computed ──────────────────────────────────────────────
   // valueChanges é reativo (signal) — ao contrário de ler `.value` diretamente,
   // que não recomputaria o `computed` ao selecionar um favorecido.
-  private readonly selectedBeneficiaryId = toSignal(
-    this.form.controls.beneficiaryId.valueChanges,
-    { initialValue: this.form.controls.beneficiaryId.value },
-  );
+  private readonly selectedBeneficiaryId = toSignal(this.form.controls.beneficiaryId.valueChanges, {
+    initialValue: this.form.controls.beneficiaryId.value,
+  });
   protected readonly selectedBeneficiary = computed<Beneficiary | undefined>(() =>
     this.beneficiaries().find((b) => b.id === this.selectedBeneficiaryId()),
   );
