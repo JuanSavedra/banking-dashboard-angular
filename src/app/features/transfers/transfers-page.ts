@@ -93,18 +93,23 @@ export class TransfersPageComponent implements OnInit {
   });
   private readonly account = toSignal(this.store.select(selectAccount));
 
-  // ── Computed ──────────────────────────────────────────────
-  protected readonly selectedBeneficiary = computed<Beneficiary | undefined>(() => {
-    const id = this.form.controls.beneficiaryId.value;
-    return this.beneficiaries().find((b) => b.id === id);
-  });
-
   // ── Form ──────────────────────────────────────────────────
   protected readonly form = this.fb.group({
     beneficiaryId: ['', Validators.required],
     amount: [null as unknown as number, [Validators.required, Validators.min(0.01)]],
     description: ['Transferência Pix'],
   });
+
+  // ── Computed ──────────────────────────────────────────────
+  // valueChanges é reativo (signal) — ao contrário de ler `.value` diretamente,
+  // que não recomputaria o `computed` ao selecionar um favorecido.
+  private readonly selectedBeneficiaryId = toSignal(
+    this.form.controls.beneficiaryId.valueChanges,
+    { initialValue: this.form.controls.beneficiaryId.value },
+  );
+  protected readonly selectedBeneficiary = computed<Beneficiary | undefined>(() =>
+    this.beneficiaries().find((b) => b.id === this.selectedBeneficiaryId()),
+  );
 
   // ── Effects ───────────────────────────────────────────────
   constructor() {
