@@ -215,6 +215,7 @@ type LimitForm = FormGroup<{ availableLimit: FormControl<number> }>;
 
       .card-panel {
         display: grid;
+        align-content: start;
         gap: var(--app-space-5);
         padding: var(--app-space-5);
         border: var(--app-border-subtle);
