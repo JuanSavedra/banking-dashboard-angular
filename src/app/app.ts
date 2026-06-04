@@ -5,8 +5,9 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-root',
   imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('banking-dashboard');
+  protected readonly productName = signal('Banking Dashboard');
+  protected readonly phase = signal('Fase 1 - Setup técnico inicial');
 }

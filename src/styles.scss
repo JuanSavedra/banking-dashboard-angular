@@ -1,1 +1,48 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+:root {
+  color-scheme: light;
+
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$chartreuse-palette,
+        tertiary: mat.$violet-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+
+  --app-color-background: #ffffff;
+  --app-color-surface: #f6f7f4;
+  --app-color-surface-strong: #ebeee6;
+  --app-color-text: #1d211b;
+  --app-color-muted: #5c6358;
+  --app-color-border: #dfe4d8;
+  --app-color-primary: #5f7f20;
+  --app-color-primary-contrast: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--app-color-background);
+  color: var(--app-color-text);
+  font-family: Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
