@@ -39,6 +39,10 @@ testem.log
 /typings
 __screenshots__/
 
+# Local contributor/agent context
+AGENTS.md
+context.md
+
 # System files
 .DS_Store
 Thumbs.db
