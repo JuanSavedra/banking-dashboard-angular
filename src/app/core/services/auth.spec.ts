@@ -1,48 +1,78 @@
-import { TestBed } from '@angular/core/testing';
+import { loginFailure, loginSuccess, logout, login } from '../store/auth/auth.actions';
+import { authReducer, AuthState } from '../store/auth/auth.reducer';
+import {
+  selectIsAuthenticated,
+  selectToken,
+  selectUser,
+  selectAuthError,
+} from '../store/auth/auth.selectors';
+import { createSelector } from '@ngrx/store';
 
-import { AuthService } from './auth';
+const initialState: AuthState = { session: null, loading: false, error: false };
 
-describe('AuthService', () => {
-  let service: AuthService;
+const session = {
+  token: 'test-token',
+  user: { name: 'Ana Souza', identifier: 'ana@banking.dev', accountLabel: 'Conta digital' },
+};
 
-  beforeEach(() => {
-    localStorage.clear();
+describe('Auth Reducer', () => {
+  it('should set loading on login', () => {
+    const state = authReducer(
+      initialState,
+      login({ credentials: { identifier: 'ana@banking.dev', password: '123456' } }),
+    );
 
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(AuthService);
+    expect(state.loading).toBe(true);
+    expect(state.error).toBe(false);
   });
 
-  afterEach(() => {
-    localStorage.clear();
+  it('should store session on loginSuccess', () => {
+    const state = authReducer(initialState, loginSuccess({ session }));
+
+    expect(state.session).toEqual(session);
+    expect(state.loading).toBe(false);
+    expect(state.error).toBe(false);
   });
 
-  it('should authenticate valid e-mail credentials', () => {
-    const authenticated = service.login({
-      identifier: 'ana@banking.dev',
-      password: '123456',
-    });
+  it('should set error on loginFailure', () => {
+    const state = authReducer(initialState, loginFailure());
 
-    expect(authenticated).toBe(true);
-    expect(service.isAuthenticated()).toBe(true);
-    expect(service.getToken()).toBe('fake-token-fase-3');
+    expect(state.session).toBeNull();
+    expect(state.loading).toBe(false);
+    expect(state.error).toBe(true);
   });
 
-  it('should reject invalid credentials', () => {
-    const authenticated = service.login({
-      identifier: 'ana@banking.dev',
-      password: 'senha-errada',
-    });
+  it('should clear state on logout', () => {
+    const authenticatedState = authReducer(initialState, loginSuccess({ session }));
+    const state = authReducer(authenticatedState, logout());
 
-    expect(authenticated).toBe(false);
-    expect(service.isAuthenticated()).toBe(false);
+    expect(state.session).toBeNull();
+    expect(state.loading).toBe(false);
+    expect(state.error).toBe(false);
+  });
+});
+
+describe('Auth Selectors', () => {
+  const state = { auth: { session, loading: false, error: false } };
+  const emptyState = { auth: initialState };
+
+  it('should select isAuthenticated true when session exists', () => {
+    expect(selectIsAuthenticated.projector(session)).toBe(true);
   });
 
-  it('should clear session on logout', () => {
-    service.login({ identifier: '12345678909', password: '123456' });
+  it('should select isAuthenticated false when no session', () => {
+    expect(selectIsAuthenticated.projector(null)).toBe(false);
+  });
 
-    service.logout();
+  it('should select token from session', () => {
+    expect(selectToken.projector(session)).toBe('test-token');
+  });
 
-    expect(service.isAuthenticated()).toBe(false);
-    expect(service.getToken()).toBeNull();
+  it('should select null token when no session', () => {
+    expect(selectToken.projector(null)).toBeNull();
+  });
+
+  it('should select user from session', () => {
+    expect(selectUser.projector(session)).toEqual(session.user);
   });
 });
