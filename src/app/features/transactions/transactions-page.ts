@@ -1,8 +1,13 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { Store } from '@ngrx/store';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs';
 
-import { Transaction } from '../../core/models/banking';
+import { Transaction, TransactionStatus, TransactionType } from '../../core/models/banking';
 import { loadTransactions } from '../../core/store/transactions/transactions.actions';
 import {
   selectAllTransactions,
@@ -18,6 +23,29 @@ import {
   StatusBadgeVariant,
 } from '../../shared/components/status-badge/status-badge';
 
+const PAGE_SIZE = 10;
+
+interface SortOption {
+  field: 'date' | 'amount';
+  dir: 'asc' | 'desc';
+}
+
+interface FilterResult {
+  items: Transaction[];
+  totalFiltered: number;
+  totalAll: number;
+  currentPage: number;
+  totalPages: number;
+}
+
+const EMPTY_RESULT: FilterResult = {
+  items: [],
+  totalFiltered: 0,
+  totalAll: 0,
+  currentPage: 1,
+  totalPages: 1,
+};
+
 @Component({
   selector: 'app-transactions-page',
   standalone: true,
@@ -25,110 +53,27 @@ import {
     EmptyStateComponent,
     ErrorStateComponent,
     LoadingStateComponent,
+    MatButtonModule,
+    MatIconModule,
     PageHeaderComponent,
+    ReactiveFormsModule,
     StatusBadgeComponent,
   ],
-  template: `
-    <app-page-header
-      eyebrow="Extrato"
-      title="Extrato da conta"
-      description="Movimentações e lançamentos da sua conta."
-    />
-
-    @if (loading()) {
-      <app-loading-state label="Carregando extrato" [rows]="6" />
-    } @else if (error()) {
-      <app-error-state
-        title="Não foi possível carregar o extrato"
-        description="Não foi possível carregar o extrato. Tente novamente."
-        actionLabel="Recarregar extrato"
-        (action)="loadTransactions()"
-      />
-    } @else if (!transactions().length) {
-      <app-empty-state
-        icon="receipt_long"
-        title="Nenhuma transação encontrada"
-        description="Nenhuma movimentação encontrada na conta."
-      />
-    } @else {
-      <section class="transactions-panel" aria-label="Lista de transações">
-        @for (transaction of transactions(); track transaction.id) {
-          <article>
-            <div>
-              <strong>{{ transaction.description }}</strong>
-              <span>{{ transaction.counterparty }} · {{ transaction.category }}</span>
-            </div>
-            <div class="transaction-meta">
-              <strong [class.positive]="transaction.type === 'credit'">
-                {{ formatSignedCurrency(transaction) }}
-              </strong>
-              <span>{{ formatDate(transaction.occurredAt) }}</span>
-            </div>
-            <app-status-badge
-              [label]="statusLabel(transaction.status)"
-              [variant]="statusVariant(transaction.status)"
-            />
-          </article>
-        }
-      </section>
-    }
-  `,
-  styles: [
-    `
-      .transactions-panel {
-        display: grid;
-        gap: var(--app-space-3);
-      }
-
-      article {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto auto;
-        gap: var(--app-space-4);
-        align-items: center;
-        padding: var(--app-space-4);
-        border: var(--app-border-subtle);
-        border-radius: var(--app-radius-lg);
-        background: var(--app-color-background);
-      }
-
-      strong,
-      span {
-        display: block;
-      }
-
-      span {
-        margin-top: var(--app-space-1);
-        color: var(--app-color-muted);
-        font-size: var(--app-font-size-label);
-      }
-
-      .transaction-meta {
-        min-width: 9rem;
-        text-align: right;
-      }
-
-      .positive {
-        color: var(--app-color-success);
-      }
-
-      @media (max-width: 48rem) {
-        article {
-          grid-template-columns: 1fr;
-        }
-
-        .transaction-meta {
-          text-align: left;
-        }
-      }
-    `,
-  ],
+  templateUrl: './transactions-page.html',
+  styleUrl: './transactions-page.scss',
 })
 export class TransactionsPageComponent implements OnInit {
   private readonly store = inject(Store);
+  private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly transactions = toSignal(this.store.select(selectAllTransactions), {
-    initialValue: [],
-  });
+  // ── Filter state ──────────────────────────────────────────
+  protected readonly searchControl = new FormControl('');
+  private readonly typeSubject = new BehaviorSubject<TransactionType | 'all'>('all');
+  private readonly statusSubject = new BehaviorSubject<TransactionStatus | 'all'>('all');
+  private readonly sortSubject = new BehaviorSubject<SortOption>({ field: 'date', dir: 'desc' });
+  private readonly pageSubject = new BehaviorSubject(1);
+
+  // ── Store state ───────────────────────────────────────────
   protected readonly loading = toSignal(this.store.select(selectTransactionsLoading), {
     initialValue: true,
   });
@@ -136,14 +81,140 @@ export class TransactionsPageComponent implements OnInit {
     initialValue: false,
   });
 
+  // ── Reactive filter pipeline ──────────────────────────────
+  private readonly result$ = combineLatest([
+    this.searchControl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      startWith(''),
+      map((v) => (v ?? '').toLowerCase().trim()),
+    ),
+    this.typeSubject,
+    this.statusSubject,
+    this.sortSubject,
+    this.pageSubject,
+    this.store.select(selectAllTransactions),
+  ]).pipe(
+    map(([search, type, status, sort, page, all]): FilterResult => {
+      let filtered = all;
+
+      if (search) {
+        filtered = filtered.filter(
+          (t) =>
+            t.description.toLowerCase().includes(search) ||
+            t.counterparty.toLowerCase().includes(search),
+        );
+      }
+
+      if (type !== 'all') filtered = filtered.filter((t) => t.type === type);
+      if (status !== 'all') filtered = filtered.filter((t) => t.status === status);
+
+      filtered = [...filtered].sort((a, b) => {
+        const aVal = sort.field === 'date' ? new Date(a.occurredAt).getTime() : a.amount;
+        const bVal = sort.field === 'date' ? new Date(b.occurredAt).getTime() : b.amount;
+        return sort.dir === 'desc' ? bVal - aVal : aVal - bVal;
+      });
+
+      const totalFiltered = filtered.length;
+      const totalPages = Math.max(1, Math.ceil(totalFiltered / PAGE_SIZE));
+      const currentPage = Math.min(page, totalPages);
+
+      return {
+        items: filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+        totalFiltered,
+        totalAll: all.length,
+        currentPage,
+        totalPages,
+      };
+    }),
+  );
+
+  private readonly result = toSignal(this.result$, { initialValue: EMPTY_RESULT });
+
+  protected readonly filteredTransactions = computed(() => this.result().items);
+  protected readonly filteredCount = computed(() => this.result().totalFiltered);
+  protected readonly totalCount = computed(() => this.result().totalAll);
+  protected readonly currentPage = computed(() => this.result().currentPage);
+  protected readonly totalPages = computed(() => this.result().totalPages);
+
+  // ── Active filter signals for UI ──────────────────────────
+  protected readonly activeType = toSignal(this.typeSubject, {
+    initialValue: 'all' as TransactionType | 'all',
+  });
+  protected readonly activeStatus = toSignal(this.statusSubject, {
+    initialValue: 'all' as TransactionStatus | 'all',
+  });
+  protected readonly activeSortValue = toSignal(
+    this.sortSubject.pipe(map((s) => `${s.field}-${s.dir}`)),
+    { initialValue: 'date-desc' },
+  );
+
+  // ── Filter options ────────────────────────────────────────
+  protected readonly typeOptions: { label: string; value: TransactionType | 'all' }[] = [
+    { label: 'Todos', value: 'all' },
+    { label: 'Crédito', value: 'credit' },
+    { label: 'Débito', value: 'debit' },
+  ];
+
+  protected readonly statusOptions: { label: string; value: TransactionStatus | 'all' }[] = [
+    { label: 'Todos', value: 'all' },
+    { label: 'Concluído', value: 'completed' },
+    { label: 'Processando', value: 'processing' },
+    { label: 'Agendado', value: 'scheduled' },
+  ];
+
+  protected readonly sortOptions = [
+    { label: 'Mais recentes', value: 'date-desc' },
+    { label: 'Mais antigas', value: 'date-asc' },
+    { label: 'Maior valor', value: 'amount-desc' },
+    { label: 'Menor valor', value: 'amount-asc' },
+  ];
+
+  // ── Lifecycle ─────────────────────────────────────────────
   ngOnInit(): void {
-    this.loadTransactions();
+    this.store.dispatch(loadTransactions());
+
+    // reset to page 1 on every search keystroke
+    this.searchControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.pageSubject.next(1));
   }
 
-  protected loadTransactions(): void {
+  // ── Filter handlers ───────────────────────────────────────
+  protected setType(value: TransactionType | 'all'): void {
+    this.typeSubject.next(value);
+    this.pageSubject.next(1);
+  }
+
+  protected setStatus(value: TransactionStatus | 'all'): void {
+    this.statusSubject.next(value);
+    this.pageSubject.next(1);
+  }
+
+  protected onSortChange(event: Event): void {
+    const raw = (event.target as HTMLSelectElement).value;
+    const [field, dir] = raw.split('-') as [SortOption['field'], SortOption['dir']];
+    this.sortSubject.next({ field, dir });
+    this.pageSubject.next(1);
+  }
+
+  protected reload(): void {
     this.store.dispatch(loadTransactions());
   }
 
+  protected clearSearch(): void {
+    this.searchControl.reset('');
+  }
+
+  protected prevPage(): void {
+    this.pageSubject.next(this.pageSubject.value - 1);
+  }
+
+  protected nextPage(): void {
+    this.pageSubject.next(this.pageSubject.value + 1);
+  }
+
+  // ── Format helpers ────────────────────────────────────────
   protected formatSignedCurrency(transaction: Transaction): string {
     const prefix = transaction.type === 'credit' ? '+' : '-';
     return `${prefix} ${this.formatCurrency(transaction.amount)}`;
@@ -163,7 +234,6 @@ export class TransactionsPageComponent implements OnInit {
       processing: 'Processando',
       scheduled: 'Agendado',
     };
-
     return labels[status];
   }
 
@@ -173,7 +243,6 @@ export class TransactionsPageComponent implements OnInit {
       processing: 'info',
       scheduled: 'warning',
     };
-
     return variants[status];
   }
 

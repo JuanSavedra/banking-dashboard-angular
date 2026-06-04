@@ -1,0 +1,135 @@
+<app-page-header
+  eyebrow="Extrato"
+  title="Extrato da conta"
+  description="Movimentações e lançamentos da sua conta."
+/>
+
+@if (loading()) {
+  <app-loading-state label="Carregando extrato" [rows]="6" />
+} @else if (error()) {
+  <app-error-state
+    title="Não foi possível carregar o extrato"
+    description="Não foi possível carregar o extrato. Tente novamente."
+    actionLabel="Recarregar extrato"
+    (action)="reload()"
+  />
+} @else {
+  <section class="filters-bar" aria-label="Filtros do extrato">
+    <div class="search-wrapper">
+      <span class="material-icons search-icon" aria-hidden="true">search</span>
+      <input
+        type="search"
+        class="search-input"
+        placeholder="Buscar por descrição ou favorecido…"
+        [formControl]="searchControl"
+        autocomplete="off"
+        aria-label="Buscar transações"
+      />
+      @if (searchControl.value) {
+        <button class="search-clear" type="button" (click)="clearSearch()" aria-label="Limpar busca">
+          <span class="material-icons">close</span>
+        </button>
+      }
+    </div>
+
+    <div class="filter-row">
+      <span class="filter-label">Tipo</span>
+      <div class="chip-group" role="group" aria-label="Filtrar por tipo">
+        @for (opt of typeOptions; track opt.value) {
+          <button
+            type="button"
+            class="chip"
+            [class.chip--active]="activeType() === opt.value"
+            (click)="setType(opt.value)"
+          >{{ opt.label }}</button>
+        }
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <span class="filter-label">Status</span>
+      <div class="chip-group" role="group" aria-label="Filtrar por status">
+        @for (opt of statusOptions; track opt.value) {
+          <button
+            type="button"
+            class="chip"
+            [class.chip--active]="activeStatus() === opt.value"
+            (click)="setStatus(opt.value)"
+          >{{ opt.label }}</button>
+        }
+      </div>
+    </div>
+
+    <div class="filter-row filter-row--sort">
+      <label class="filter-label" for="sort-select">Ordenar</label>
+      <select id="sort-select" class="sort-select" (change)="onSortChange($event)">
+        @for (opt of sortOptions; track opt.value) {
+          <option [value]="opt.value" [selected]="activeSortValue() === opt.value">
+            {{ opt.label }}
+          </option>
+        }
+      </select>
+    </div>
+  </section>
+
+  <div class="results-meta" aria-live="polite" aria-atomic="true">
+    <span>{{ filteredCount() }} de {{ totalCount() }} transações</span>
+  </div>
+
+  @if (!filteredCount()) {
+    <app-empty-state
+      icon="search_off"
+      title="Nenhuma transação encontrada"
+      description="Ajuste os filtros ou o termo de busca para ver resultados."
+    />
+  } @else {
+    <section class="transactions-panel" aria-label="Lista de transações">
+      @for (transaction of filteredTransactions(); track transaction.id) {
+        <article>
+          <div class="transaction-info">
+            <strong>{{ transaction.description }}</strong>
+            <span>{{ transaction.counterparty }} · {{ transaction.category }}</span>
+          </div>
+          <div class="transaction-meta">
+            <strong [class.positive]="transaction.type === 'credit'">
+              {{ formatSignedCurrency(transaction) }}
+            </strong>
+            <span>{{ formatDate(transaction.occurredAt) }}</span>
+          </div>
+          <app-status-badge
+            [label]="statusLabel(transaction.status)"
+            [variant]="statusVariant(transaction.status)"
+          />
+        </article>
+      }
+    </section>
+
+    @if (totalPages() > 1) {
+      <nav class="pagination" aria-label="Paginação do extrato">
+        <button
+          mat-button
+          type="button"
+          [disabled]="currentPage() === 1"
+          (click)="prevPage()"
+        >
+          <mat-icon aria-hidden="true">chevron_left</mat-icon>
+          Anterior
+        </button>
+
+        <span class="pagination__info">
+          Página {{ currentPage() }} de {{ totalPages() }}
+        </span>
+
+        <button
+          mat-button
+          type="button"
+          [disabled]="currentPage() === totalPages()"
+          (click)="nextPage()"
+        >
+          Próxima
+          <mat-icon aria-hidden="true">chevron_right</mat-icon>
+        </button>
+      </nav>
+    }
+  }
+}
