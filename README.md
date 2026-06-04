@@ -1,59 +1,68 @@
-# BankingDashboard
+# Banking Dashboard
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.13.
+Aplicação front-end bancária em Angular que simula um dashboard financeiro completo, com foco em experiência de produto, arquitetura profissional e demonstração técnica para avaliação de vaga.
 
-## Development server
+## Status do Projeto
 
-To start a local development server, run:
+Fase atual: **Fase 0 — Planejamento do projeto**.
 
-```bash
-ng serve
-```
+A Fase 0 define escopo, stack, entidades, telas e wireframes textuais antes de avançar para setup técnico e implementação de interface. A documentação detalhada está em [docs/fase-0.md](docs/fase-0.md).
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Objetivo Técnico
 
-## Code scaffolding
+Demonstrar domínio de Angular moderno, rotas, formulários, API REST simulada, NgRx, RxJS, responsividade, SCSS, acessibilidade, performance, testes, Git e CI/CD em um produto bancário realista.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Funcionalidades Planejadas
 
-```bash
-ng generate component component-name
-```
+- Login com autenticação fake.
+- Dashboard com saldo, resumo financeiro, últimas transações, atalhos e notificações.
+- Extrato com filtros, busca e detalhe de transação.
+- Transferência Pix simulada, com validação, confirmação e comprovante.
+- Favorecidos com listagem, cadastro, edição, remoção e detalhe.
+- Cartões com status, limite e ações simuladas.
+- Perfil com dados pessoais, preferências e segurança.
+- Página 404 e estados de loading, empty, error e success.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Stack Planejada
 
-```bash
-ng generate --help
-```
+- Angular 21 com standalone components e SSR.
+- Angular Router para rotas públicas, privadas e fallback 404.
+- Angular Material com tema customizado.
+- SCSS para tokens, tema, mixins e responsividade.
+- RxJS para fluxos assíncronos.
+- NgRx para gerenciamento de estado.
+- MSW para API fake.
+- Vitest via Angular builder para testes unitários.
+- Prettier para formatação.
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Comandos
 
 ```bash
-ng test
+npm start
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+Inicia o servidor local em `http://localhost:4200/`.
 
 ```bash
-ng e2e
+npm run build
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Gera o build de produção com SSR em `dist/`.
 
-## Additional Resources
+```bash
+npm test
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Executa os testes unitários com Vitest.
+
+```bash
+npm run serve:ssr:banking-dashboard
+```
+
+Serve o build SSR gerado.
+
+## Diretrizes de Produto e Design
+
+- [PRODUCT.md](PRODUCT.md): estratégia, público, propósito, personalidade e princípios do produto.
+- [DESIGN.md](DESIGN.md): seed do sistema visual para orientar a criação da interface.
+- [docs/fase-0.md](docs/fase-0.md): escopo fechado da Fase 0.
