@@ -73,6 +73,14 @@ npm run serve:ssr:banking-dashboard
 
 Serve o build SSR gerado.
 
+## Credenciais Fake
+
+Use qualquer uma das opções abaixo para acessar o fluxo autenticado local:
+
+- E-mail: `ana@banking.dev`
+- CPF: `12345678909`
+- Senha: `123456`
+
 ## Diretrizes de Produto e Design
 
 - [PRODUCT.md](PRODUCT.md): estratégia, público, propósito, personalidade e princípios do produto.
@@ -80,3 +88,4 @@ Serve o build SSR gerado.
 - [docs/fase-0.md](docs/fase-0.md): escopo fechado da Fase 0.
 - [docs/fase-1.md](docs/fase-1.md): setup técnico inicial e validações.
 - [docs/fase-2.md](docs/fase-2.md): design system, shell preview e componentes compartilhados.
+- [docs/fase-3.md](docs/fase-3.md): rotas, navegação real e autenticação fake.
