@@ -56,6 +56,18 @@ npm test
 Executa os testes unitários com Vitest.
 
 ```bash
+npm run lint
+```
+
+Executa ESLint no projeto.
+
+```bash
+npm run format:check
+```
+
+Valida a formatação com Prettier sem reescrever arquivos.
+
+```bash
 npm run serve:ssr:banking-dashboard
 ```
 
@@ -66,3 +78,4 @@ Serve o build SSR gerado.
 - [PRODUCT.md](PRODUCT.md): estratégia, público, propósito, personalidade e princípios do produto.
 - [DESIGN.md](DESIGN.md): seed do sistema visual para orientar a criação da interface.
 - [docs/fase-0.md](docs/fase-0.md): escopo fechado da Fase 0.
+- [docs/fase-1.md](docs/fase-1.md): setup técnico inicial e validações.
