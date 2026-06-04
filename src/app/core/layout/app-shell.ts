@@ -25,7 +25,6 @@ export class AppShellComponent {
   private readonly store = inject(Store);
 
   protected readonly productName = 'Banking Dashboard';
-  protected readonly phase = 'Fase 5 - NgRx e gerenciamento de estado';
   protected readonly menuOpen = signal(false);
   protected readonly user = toSignal(this.store.select(selectUser));
 
