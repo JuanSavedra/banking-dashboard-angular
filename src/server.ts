@@ -313,6 +313,7 @@ app.post(
       return;
     }
 
+    const now = new Date().toISOString();
     const transfer: Transfer = {
       id: `trf-${Date.now()}`,
       beneficiaryId: beneficiary.id,
@@ -320,8 +321,22 @@ app.post(
       description: request.body.description,
       status: 'completed',
       receiptCode: `BD-${Date.now()}`,
-      createdAt: new Date().toISOString(),
+      createdAt: now,
     };
+
+    // Reflete a transferência na conta e no extrato (dados em memória).
+    account.balance -= transfer.amount;
+    account.outcomeThisMonth += transfer.amount;
+    transactions.unshift({
+      id: transfer.id,
+      description: 'Transferência Pix enviada',
+      counterparty: beneficiary.name,
+      amount: transfer.amount,
+      type: 'debit',
+      status: 'completed',
+      category: 'Transferência',
+      occurredAt: now,
+    });
 
     response.status(201);
     sendData(

@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, of, switchMap } from 'rxjs';
 
+import { loadAccount } from '../account/account.actions';
 import { loadTransactions } from '../transactions/transactions.actions';
 import { TransfersService } from '../../services/transfers';
 import { createTransfer, createTransferFailure, createTransferSuccess } from './transfers.actions';
@@ -26,7 +27,7 @@ export class TransfersEffects {
   afterTransferSuccess$ = createEffect(() =>
     this.actions$.pipe(
       ofType(createTransferSuccess),
-      map(() => loadTransactions()),
+      switchMap(() => [loadTransactions(), loadAccount()]),
     ),
   );
 }
