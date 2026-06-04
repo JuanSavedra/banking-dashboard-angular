@@ -4,9 +4,9 @@ Aplicação front-end bancária em Angular para consulta de saldo, extrato, cart
 
 ## Status do Projeto
 
-Fase atual: **Fase 9 — CRUD de favorecidos**.
+Fase atual: **Fase 10 — Cartões**.
 
-A Fase 9 implementa cadastro, edição, exclusão e detalhe de favorecidos com rotas, formulários, NgRx e API REST. A documentação detalhada está em [docs/fase-9.md](docs/fase-9.md).
+A Fase 10 aprofunda a área de cartões com limite, status, bloqueio, desbloqueio e compras recentes. A documentação detalhada está em [docs/fase-10.md](docs/fase-10.md).
 
 ## Objetivo Técnico
 
@@ -19,7 +19,7 @@ Demonstrar domínio de Angular moderno, rotas, formulários, API REST, NgRx, RxJ
 - Extrato com filtros, busca e detalhe de transação.
 - Transferência Pix, com validação, confirmação e comprovante.
 - Favorecidos com listagem, cadastro, edição, remoção e detalhe.
-- Cartões com status, limite e ações de bloqueio.
+- Cartões com status, limite, compras recentes e ações de bloqueio.
 - Perfil com dados pessoais, preferências e segurança.
 - Página 404 e estados de loading, empty, error e success.
 
@@ -101,3 +101,4 @@ Use qualquer uma das opções abaixo para acessar o fluxo autenticado local:
 - [docs/fase-3.md](docs/fase-3.md): rotas, navegação real e autenticação.
 - [docs/fase-4.md](docs/fase-4.md): API REST, services HTTP e telas conectadas.
 - [docs/fase-9.md](docs/fase-9.md): CRUD de favorecidos com rotas e formulários.
+- [docs/fase-10.md](docs/fase-10.md): gestão de cartões, limites e compras recentes.
