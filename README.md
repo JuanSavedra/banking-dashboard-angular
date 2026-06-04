@@ -12,6 +12,57 @@ A Fase 12 aplica otimizações conservadoras de performance com lazy loading, `O
 
 Demonstrar domínio de Angular moderno, rotas, formulários, API REST, NgRx, RxJS, responsividade, SCSS, acessibilidade, performance, testes, Git e CI/CD em um produto bancário realista.
 
+## Arquitetura
+
+Aplicação em camadas, com responsabilidades isoladas e estado centralizado em NgRx:
+
+```
+Componentes (features)  →  apresentação, formulários reativos, signals
+        ↓ dispatch / select
+NgRx (store/effects)    →  estado global, side effects, selectors memoizados
+        ↓
+Services (HTTP)         →  acesso à API via HttpClient + API_BASE_URL + unwrapData
+        ↓
+API REST (Express SSR)  →  endpoints /api/* com dados em memória
+```
+
+Fluxo típico: o componente faz `dispatch` de uma action → o **effect** chama o **service** →
+o service consome a API e devolve o `data` (operador `unwrapData`) → o effect emite
+`success`/`failure` → o **reducer** atualiza o estado → o componente lê via **selector**
+(`toSignal`). Interceptors tratam autenticação (`Bearer`) e erros globais (401 → logout).
+
+### Estrutura de pastas
+
+```
+src/
+  environments/            # apiBaseUrl por ambiente (fileReplacements)
+  server.ts                # Express SSR + API REST /api/*
+  styles/                  # tokens, mixins, base, utilities (SCSS)
+  app/
+    core/
+      guards/              # authGuard, guestGuard
+      http/                # API_BASE_URL (token) + unwrapData (operador)
+      interceptors/        # authInterceptor, errorInterceptor
+      layout/              # AppShellComponent
+      models/              # interfaces e tipos de domínio
+      services/            # um service por domínio
+      store/               # NgRx: actions, reducer, effects, selectors por domínio
+    features/              # uma pasta por rota (lazy-loaded)
+    shared/
+      components/          # PageHeader, SummaryCard, StatusBadge, estados, dialog
+      pipes/               # pipes de status + signedCurrency
+      status/              # status-presentation (fonte única de rótulos/variantes)
+```
+
+### Decisões técnicas
+
+- **Sem duplicação de formatação:** moeda e data usam os pipes nativos (`CurrencyPipe`/`DatePipe`)
+  com `LOCALE_ID=pt-BR` e `DEFAULT_CURRENCY_CODE=BRL`; rótulos/variantes de status vêm de uma
+  configuração única (`shared/status`) exposta por pipes puros (memoizados sob `OnPush`).
+- **Camada HTTP enxuta:** URL base injetável (`API_BASE_URL`) e operador `unwrapData` eliminam
+  strings e `map` repetidos nos services.
+- **Tipagem estrita:** sem `any`; envelopes de resposta tipados (`ApiResponse<T>`).
+
 ## Funcionalidades Planejadas
 
 - Login com autenticação.
@@ -98,6 +149,17 @@ A API roda no servidor Express do Angular SSR e expõe endpoints REST em `/api/*
 - Listas usam `@for` com `track` para reduzir recriação de DOM.
 - Estado reativo baseado em signals, computeds e selectors memoizados do NgRx.
 - Bundle acompanhado pelo `npm run build` e Lighthouse documentado para auditoria local.
+
+## CI/CD
+
+Pipeline em GitHub Actions ([.github/workflows/ci.yml](.github/workflows/ci.yml)) executado em
+`push` e `pull_request` para `main`, com Node 22 e cache de dependências:
+
+1. `npm ci`
+2. `npm run lint`
+3. `npm run format:check`
+4. `npm test`
+5. `npm run build`
 
 ## Credenciais de Acesso
 
