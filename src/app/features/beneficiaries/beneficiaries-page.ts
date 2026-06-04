@@ -1,20 +1,26 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import { Beneficiary } from '../../core/models/banking';
 import {
-  createBeneficiary,
+  deleteBeneficiary,
   loadBeneficiaries,
 } from '../../core/store/beneficiaries/beneficiaries.actions';
 import {
   selectAllBeneficiaries,
   selectBeneficiariesError,
   selectBeneficiariesLoading,
+  selectBeneficiariesSubmitting,
 } from '../../core/store/beneficiaries/beneficiaries.selectors';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogData,
+} from '../../shared/components/confirm-dialog/confirm-dialog';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state';
@@ -28,8 +34,8 @@ import {
   selector: 'app-beneficiaries-page',
   standalone: true,
   imports: [
-    EmptyStateComponent,
     ErrorStateComponent,
+    EmptyStateComponent,
     LoadingStateComponent,
     MatButtonModule,
     MatIconModule,
@@ -41,12 +47,12 @@ import {
     <app-page-header
       eyebrow="Favorecidos"
       title="Favorecidos Pix"
-      description="Lista de favorecidos Pix com detalhe navegável."
+      description="Gerencie contatos autorizados para transferências Pix."
     >
-      <button pageHeaderActions mat-flat-button type="button" (click)="createDemoBeneficiary()">
+      <a pageHeaderActions mat-flat-button routerLink="/app/beneficiaries/new">
         <mat-icon aria-hidden="true">person_add</mat-icon>
-        Criar demo
-      </button>
+        Novo favorecido
+      </a>
     </app-page-header>
 
     @if (loading()) {
@@ -62,9 +68,9 @@ import {
       <app-empty-state
         icon="group_add"
         title="Nenhum favorecido cadastrado"
-        description="Crie um favorecido demo para validar POST e listagem."
-        actionLabel="Criar favorecido demo"
-        (action)="createDemoBeneficiary()"
+        description="Cadastre um favorecido para realizar transferências Pix com mais agilidade."
+        actionLabel="Novo favorecido"
+        (action)="goToNewBeneficiary()"
       />
     } @else {
       <section class="beneficiaries-list" aria-label="Lista de favorecidos">
@@ -78,7 +84,18 @@ import {
               [label]="statusLabel(beneficiary.status)"
               [variant]="statusVariant(beneficiary.status)"
             />
-            <a mat-button [routerLink]="['/app/beneficiaries', beneficiary.id]">Ver detalhe</a>
+            <div class="beneficiaries-list__actions">
+              <a mat-button [routerLink]="['/app/beneficiaries', beneficiary.id]">Ver detalhe</a>
+              <a mat-button [routerLink]="['/app/beneficiaries', beneficiary.id, 'edit']">Editar</a>
+              <button
+                mat-button
+                type="button"
+                [disabled]="submitting()"
+                (click)="confirmDelete(beneficiary)"
+              >
+                Excluir
+              </button>
+            </div>
           </article>
         }
       </section>
@@ -113,15 +130,28 @@ import {
         font-size: var(--app-font-size-label);
       }
 
+      .beneficiaries-list__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--app-space-2);
+        justify-content: flex-end;
+      }
+
       @media (max-width: 48rem) {
         article {
           grid-template-columns: 1fr;
+        }
+
+        .beneficiaries-list__actions {
+          justify-content: flex-start;
         }
       }
     `,
   ],
 })
 export class BeneficiariesPageComponent implements OnInit {
+  private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly store = inject(Store);
 
   protected readonly beneficiaries = toSignal(this.store.select(selectAllBeneficiaries), {
@@ -133,6 +163,9 @@ export class BeneficiariesPageComponent implements OnInit {
   protected readonly error = toSignal(this.store.select(selectBeneficiariesError), {
     initialValue: false,
   });
+  protected readonly submitting = toSignal(this.store.select(selectBeneficiariesSubmitting), {
+    initialValue: false,
+  });
 
   ngOnInit(): void {
     this.loadBeneficiaries();
@@ -142,17 +175,26 @@ export class BeneficiariesPageComponent implements OnInit {
     this.store.dispatch(loadBeneficiaries());
   }
 
-  protected createDemoBeneficiary(): void {
-    this.store.dispatch(
-      createBeneficiary({
-        payload: {
-          name: 'Contato Demo',
-          bank: 'Banco Operacional',
-          document: '111.222.333-44',
-          pixKey: 'contato-demo@email.dev',
-        },
-      }),
-    );
+  protected goToNewBeneficiary(): void {
+    void this.router.navigate(['/app/beneficiaries/new']);
+  }
+
+  protected confirmDelete(beneficiary: Beneficiary): void {
+    const data: ConfirmDialogData = {
+      title: 'Excluir favorecido',
+      description: `Excluir ${beneficiary.name} da lista de favorecidos?`,
+      confirmLabel: 'Excluir favorecido',
+      cancelLabel: 'Cancelar',
+    };
+
+    this.dialog
+      .open(ConfirmDialogComponent, { data, width: '22rem' })
+      .afterClosed()
+      .subscribe((confirmed: boolean | undefined) => {
+        if (confirmed) {
+          this.store.dispatch(deleteBeneficiary({ id: beneficiary.id }));
+        }
+      });
   }
 
   protected statusLabel(status: Beneficiary['status']): string {

@@ -16,14 +16,14 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
 
     <section class="profile-grid">
       <article>
-        <span>Usuário demo</span>
+        <span>Titular da conta</span>
         <strong>Ana Souza</strong>
         <p>ana&#64;banking.dev</p>
       </article>
       <article>
         <span>Segurança</span>
         <strong>Senha configurada</strong>
-        <app-status-badge label="Ambiente demo" variant="info" />
+        <app-status-badge label="Acesso ativo" variant="info" />
       </article>
     </section>
   `,

@@ -72,7 +72,7 @@ const transactions: Transaction[] = [
   {
     id: 'txn-004',
     description: 'Salário',
-    counterparty: 'Empresa Demo LTDA',
+    counterparty: 'Empresa Aurora LTDA',
     amount: 10500,
     type: 'credit',
     status: 'completed',

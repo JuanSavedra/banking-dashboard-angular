@@ -7,9 +7,15 @@ import {
   createBeneficiary,
   createBeneficiaryFailure,
   createBeneficiarySuccess,
+  deleteBeneficiary,
+  deleteBeneficiaryFailure,
+  deleteBeneficiarySuccess,
   loadBeneficiaries,
   loadBeneficiariesFailure,
   loadBeneficiariesSuccess,
+  updateBeneficiary,
+  updateBeneficiaryFailure,
+  updateBeneficiarySuccess,
 } from './beneficiaries.actions';
 
 @Injectable()
@@ -36,6 +42,30 @@ export class BeneficiariesEffects {
         this.beneficiariesService.createBeneficiary(payload).pipe(
           map((beneficiary) => createBeneficiarySuccess({ beneficiary })),
           catchError(() => of(createBeneficiaryFailure())),
+        ),
+      ),
+    ),
+  );
+
+  updateBeneficiary$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateBeneficiary),
+      switchMap(({ id, payload }) =>
+        this.beneficiariesService.updateBeneficiary(id, payload).pipe(
+          map((beneficiary) => updateBeneficiarySuccess({ beneficiary })),
+          catchError(() => of(updateBeneficiaryFailure())),
+        ),
+      ),
+    ),
+  );
+
+  deleteBeneficiary$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteBeneficiary),
+      switchMap(({ id }) =>
+        this.beneficiariesService.deleteBeneficiary(id).pipe(
+          map((result) => deleteBeneficiarySuccess({ id: result.id })),
+          catchError(() => of(deleteBeneficiaryFailure())),
         ),
       ),
     ),

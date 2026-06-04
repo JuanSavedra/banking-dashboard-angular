@@ -6,9 +6,15 @@ import {
   createBeneficiary,
   createBeneficiaryFailure,
   createBeneficiarySuccess,
+  deleteBeneficiary,
+  deleteBeneficiaryFailure,
+  deleteBeneficiarySuccess,
   loadBeneficiaries,
   loadBeneficiariesFailure,
   loadBeneficiariesSuccess,
+  updateBeneficiary,
+  updateBeneficiaryFailure,
+  updateBeneficiarySuccess,
 } from './beneficiaries.actions';
 
 export interface BeneficiariesState extends EntityState<Beneficiary> {
@@ -37,4 +43,14 @@ export const beneficiariesReducer = createReducer(
     beneficiariesAdapter.addOne(beneficiary, { ...state, submitting: false }),
   ),
   on(createBeneficiaryFailure, (state) => ({ ...state, submitting: false, error: true })),
+  on(updateBeneficiary, (state) => ({ ...state, submitting: true, error: false })),
+  on(updateBeneficiarySuccess, (state, { beneficiary }) =>
+    beneficiariesAdapter.upsertOne(beneficiary, { ...state, submitting: false }),
+  ),
+  on(updateBeneficiaryFailure, (state) => ({ ...state, submitting: false, error: true })),
+  on(deleteBeneficiary, (state) => ({ ...state, submitting: true, error: false })),
+  on(deleteBeneficiarySuccess, (state, { id }) =>
+    beneficiariesAdapter.removeOne(id, { ...state, submitting: false }),
+  ),
+  on(deleteBeneficiaryFailure, (state) => ({ ...state, submitting: false, error: true })),
 );

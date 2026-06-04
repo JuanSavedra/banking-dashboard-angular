@@ -49,6 +49,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'beneficiaries/new',
+        loadComponent: () =>
+          import('./features/beneficiaries/beneficiary-form-page').then(
+            (m) => m.BeneficiaryFormPageComponent,
+          ),
+      },
+      {
+        path: 'beneficiaries/:id/edit',
+        loadComponent: () =>
+          import('./features/beneficiaries/beneficiary-form-page').then(
+            (m) => m.BeneficiaryFormPageComponent,
+          ),
+      },
+      {
         path: 'beneficiaries/:id',
         loadComponent: () =>
           import('./features/beneficiaries/beneficiary-detail-page').then(
