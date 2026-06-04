@@ -5,31 +5,34 @@ import {
   RouterStateSnapshot,
   provideRouter,
 } from '@angular/router';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
-import { AuthService } from '../services/auth';
+import { selectIsAuthenticated } from '../store/auth/auth.selectors';
 import { authGuard } from './auth.guard';
 import { guestGuard } from './guest.guard';
 
 describe('route guards', () => {
-  let authService: AuthService;
+  let store: MockStore;
   let router: Router;
 
   beforeEach(() => {
-    localStorage.clear();
-
     TestBed.configureTestingModule({
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        provideMockStore({
+          initialState: { auth: { session: null, loading: false, error: false } },
+        }),
+      ],
     });
 
-    authService = TestBed.inject(AuthService);
+    store = TestBed.inject(MockStore);
     router = TestBed.inject(Router);
   });
 
-  afterEach(() => {
-    localStorage.clear();
-  });
-
   it('should redirect unauthenticated users to login with returnUrl', () => {
+    store.overrideSelector(selectIsAuthenticated, false);
+    store.refreshState();
+
     const result = TestBed.runInInjectionContext(() =>
       authGuard(new ActivatedRouteSnapshot(), { url: '/app/cards' } as RouterStateSnapshot),
     );
@@ -40,7 +43,8 @@ describe('route guards', () => {
   });
 
   it('should allow authenticated users into private routes', () => {
-    authService.login({ identifier: 'ana@banking.dev', password: '123456' });
+    store.overrideSelector(selectIsAuthenticated, true);
+    store.refreshState();
 
     const result = TestBed.runInInjectionContext(() =>
       authGuard(new ActivatedRouteSnapshot(), { url: '/app/dashboard' } as RouterStateSnapshot),
@@ -50,7 +54,8 @@ describe('route guards', () => {
   });
 
   it('should redirect authenticated guests away from login', () => {
-    authService.login({ identifier: '12345678909', password: '123456' });
+    store.overrideSelector(selectIsAuthenticated, true);
+    store.refreshState();
 
     const result = TestBed.runInInjectionContext(() =>
       guestGuard(new ActivatedRouteSnapshot(), { url: '/login' } as RouterStateSnapshot),
@@ -59,5 +64,16 @@ describe('route guards', () => {
     expect(router.serializeUrl(result as ReturnType<typeof router.createUrlTree>)).toBe(
       '/app/dashboard',
     );
+  });
+
+  it('should allow unauthenticated users to access guest routes', () => {
+    store.overrideSelector(selectIsAuthenticated, false);
+    store.refreshState();
+
+    const result = TestBed.runInInjectionContext(() =>
+      guestGuard(new ActivatedRouteSnapshot(), { url: '/login' } as RouterStateSnapshot),
+    );
+
+    expect(result).toBe(true);
   });
 });

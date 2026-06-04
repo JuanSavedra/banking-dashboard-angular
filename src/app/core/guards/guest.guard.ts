@@ -1,11 +1,13 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 
-import { AuthService } from '../services/auth';
+import { selectIsAuthenticated } from '../store/auth/auth.selectors';
 
 export const guestGuard: CanActivateFn = () => {
-  const authService = inject(AuthService);
+  const store = inject(Store);
   const router = inject(Router);
+  const isAuthenticated = store.selectSignal(selectIsAuthenticated);
 
-  return authService.isAuthenticated() ? router.createUrlTree(['/app/dashboard']) : true;
+  return isAuthenticated() ? router.createUrlTree(['/app/dashboard']) : true;
 };

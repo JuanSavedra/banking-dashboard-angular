@@ -1,9 +1,12 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Store } from '@ngrx/store';
 
-import { AuthService } from '../services/auth';
+import { logout } from '../store/auth/auth.actions';
+import { selectUser } from '../store/auth/auth.selectors';
 
 interface NavigationItem {
   label: string;
@@ -19,13 +22,12 @@ interface NavigationItem {
   styleUrl: './app-shell.scss',
 })
 export class AppShellComponent {
-  private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
+  private readonly store = inject(Store);
 
   protected readonly productName = 'Banking Dashboard';
-  protected readonly phase = 'Fase 3 - Rotas, navegação e autenticação';
+  protected readonly phase = 'Fase 5 - NgRx e gerenciamento de estado';
   protected readonly menuOpen = signal(false);
-  protected readonly user = computed(() => this.authService.user());
+  protected readonly user = toSignal(this.store.select(selectUser));
 
   protected readonly navigationItems: NavigationItem[] = [
     { label: 'Dashboard', icon: 'dashboard', route: '/app/dashboard' },
@@ -45,7 +47,6 @@ export class AppShellComponent {
   }
 
   protected logout(): void {
-    this.authService.logout();
-    void this.router.navigate(['/login']);
+    this.store.dispatch(logout());
   }
 }
