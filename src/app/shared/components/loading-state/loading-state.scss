@@ -9,7 +9,7 @@
 
 .loading-state__row {
   height: 0.875rem;
-  border-radius: 999px;
+  border-radius: var(--app-radius-pill);
   background: linear-gradient(
     90deg,
     var(--app-color-surface-strong),

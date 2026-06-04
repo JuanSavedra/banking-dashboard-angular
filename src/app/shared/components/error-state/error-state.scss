@@ -3,7 +3,7 @@
   gap: var(--app-space-4);
   align-items: flex-start;
   padding: var(--app-space-5);
-  border: 1px solid rgba(180, 35, 24, 0.22);
+  border: var(--app-border-error-soft);
   border-radius: var(--app-radius-lg);
   background: var(--app-color-error-soft);
   color: var(--app-color-error);

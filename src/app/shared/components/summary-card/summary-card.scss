@@ -18,23 +18,23 @@
 }
 
 mat-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  font-size: 1.25rem;
+  width: var(--app-icon-size-md);
+  height: var(--app-icon-size-md);
+  font-size: var(--app-icon-size-md);
 }
 
 strong {
   display: block;
   margin-top: var(--app-space-5);
   color: var(--app-color-text);
-  font-size: 1.75rem;
+  font-size: var(--app-font-size-headline);
   line-height: 1.1;
 }
 
 p {
   margin: var(--app-space-3) 0 0;
   color: var(--app-color-muted);
-  font-size: 0.9375rem;
+  font-size: var(--app-font-size-body);
   line-height: 1.5;
 }
 

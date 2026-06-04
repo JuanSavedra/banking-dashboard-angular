@@ -8,10 +8,10 @@
 }
 
 mat-icon {
-  width: 2rem;
-  height: 2rem;
+  width: var(--app-icon-size-lg);
+  height: var(--app-icon-size-lg);
   color: var(--app-color-primary);
-  font-size: 2rem;
+  font-size: var(--app-icon-size-lg);
 }
 
 h2 {
