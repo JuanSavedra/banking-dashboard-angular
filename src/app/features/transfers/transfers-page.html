@@ -1,0 +1,114 @@
+<app-page-header
+  eyebrow="Transferência"
+  title="Transferência Pix"
+  description="Envie uma transferência Pix para um favorecido cadastrado."
+/>
+
+@if (loading()) {
+  <app-loading-state label="Carregando favorecidos" [rows]="4" />
+} @else if (error()) {
+  <app-error-state
+    title="Não foi possível carregar favorecidos"
+    description="Não foi possível carregar os favorecidos. Tente novamente."
+    actionLabel="Recarregar"
+    (action)="reload()"
+  />
+} @else if (!beneficiaries().length) {
+  <app-empty-state
+    icon="group_add"
+    title="Nenhum favorecido cadastrado"
+    description="Cadastre um favorecido antes de realizar uma transferência Pix."
+  />
+} @else if (receipt()) {
+  <section class="receipt-panel" aria-label="Comprovante de transferência">
+    <div class="receipt-panel__header">
+      <app-status-badge label="Concluído" variant="success" />
+      <h2>Comprovante de transferência</h2>
+    </div>
+
+    <dl class="receipt-panel__data">
+      <div>
+        <dt>Código do comprovante</dt>
+        <dd>{{ receipt()!.receiptCode }}</dd>
+      </div>
+      <div>
+        <dt>Valor transferido</dt>
+        <dd class="receipt-panel__amount">{{ formatCurrency(receipt()!.amount) }}</dd>
+      </div>
+      <div>
+        <dt>Data e hora</dt>
+        <dd>{{ formatDate(receipt()!.createdAt) }}</dd>
+      </div>
+    </dl>
+
+    <button mat-flat-button type="button" (click)="newTransfer()">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      Nova transferência
+    </button>
+  </section>
+} @else {
+  <section class="transfer-form-panel" aria-labelledby="transfer-form-title">
+    <h2 id="transfer-form-title" class="transfer-form-panel__title">Dados da transferência</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="transfer-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Favorecido</mat-label>
+        <mat-select formControlName="beneficiaryId">
+          @for (b of beneficiaries(); track b.id) {
+            <mat-option [value]="b.id">
+              {{ b.name }} — {{ b.bank }} · {{ b.pixKey }}
+            </mat-option>
+          }
+        </mat-select>
+        @if (form.controls.beneficiaryId.hasError('required') && form.controls.beneficiaryId.touched) {
+          <mat-error>Selecione um favorecido.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Valor</mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="amount"
+          min="0.01"
+          step="0.01"
+          placeholder="0,00"
+        />
+        <span matTextPrefix>R$&nbsp;</span>
+        @if (form.controls.amount.hasError('required') && form.controls.amount.touched) {
+          <mat-error>Informe o valor da transferência.</mat-error>
+        } @else if (form.controls.amount.hasError('min') && form.controls.amount.touched) {
+          <mat-error>Valor mínimo de R$ 0,01.</mat-error>
+        } @else if (form.controls.amount.hasError('maxBalance')) {
+          <mat-error>Saldo insuficiente para esta transferência.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Descrição</mat-label>
+        <input matInput formControlName="description" placeholder="Transferência Pix" />
+      </mat-form-field>
+
+      @if (transferError()) {
+        <p class="transfer-form__error" role="alert">
+          Não foi possível processar a transferência. Tente novamente.
+        </p>
+      }
+
+      <div class="transfer-form__actions">
+        @if (selectedBeneficiary()) {
+          <p class="transfer-form__summary">
+            Enviando para <strong>{{ selectedBeneficiary()!.name }}</strong>
+            via <strong>{{ selectedBeneficiary()!.bank }}</strong>
+          </p>
+        }
+
+        <button mat-flat-button type="submit" [disabled]="submitting()">
+          <mat-icon aria-hidden="true">send</mat-icon>
+          {{ submitting() ? 'Processando…' : 'Transferir' }}
+        </button>
+      </div>
+    </form>
+  </section>
+}

@@ -1,0 +1,106 @@
+// ── Transfer form panel ───────────────────────────────────────────────────────
+
+.transfer-form-panel {
+  padding: var(--app-space-6);
+  border: var(--app-border-subtle);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-color-background);
+}
+
+.transfer-form-panel__title {
+  margin: 0 0 var(--app-space-6);
+  font-size: var(--app-font-size-title);
+}
+
+.transfer-form {
+  display: grid;
+  gap: var(--app-space-2);
+  max-width: 32rem;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.transfer-form__error {
+  padding: var(--app-space-3) var(--app-space-4);
+  border-radius: var(--app-radius-md);
+  background: var(--app-color-error-soft);
+  color: var(--app-color-error);
+  font-size: var(--app-font-size-label);
+  margin: 0;
+}
+
+.transfer-form__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--app-space-4);
+  margin-top: var(--app-space-2);
+  flex-wrap: wrap;
+}
+
+.transfer-form__summary {
+  margin: 0;
+  font-size: var(--app-font-size-label);
+  color: var(--app-color-muted);
+}
+
+// ── Receipt panel ─────────────────────────────────────────────────────────────
+
+.receipt-panel {
+  display: grid;
+  gap: var(--app-space-6);
+  padding: var(--app-space-6);
+  border: var(--app-border-subtle);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-color-background);
+  max-width: 32rem;
+}
+
+.receipt-panel__header {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-3);
+
+  h2 {
+    margin: 0;
+    font-size: var(--app-font-size-title);
+  }
+}
+
+.receipt-panel__data {
+  display: grid;
+  gap: var(--app-space-4);
+  margin: 0;
+
+  dt {
+    font-size: var(--app-font-size-label);
+    font-weight: 700;
+    color: var(--app-color-muted);
+    margin-bottom: var(--app-space-1);
+  }
+
+  dd {
+    margin: 0;
+    font-size: var(--app-font-size-body);
+    font-weight: 700;
+  }
+}
+
+.receipt-panel__amount {
+  font-size: var(--app-font-size-headline);
+  color: var(--app-color-success);
+}
+
+@media (max-width: 48rem) {
+  .transfer-form-panel,
+  .receipt-panel {
+    padding: var(--app-space-4);
+  }
+
+  .transfer-form__actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
