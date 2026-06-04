@@ -1,0 +1,64 @@
+<app-page-header
+  eyebrow="Dashboard"
+  title="Visão financeira"
+  description="Resumo visual da conta, preparado para receber dados reais na fase de API fake."
+>
+  <button pageHeaderActions mat-flat-button type="button">
+    <mat-icon aria-hidden="true">add</mat-icon>
+    Nova transferência
+  </button>
+</app-page-header>
+
+<section class="summary-grid" aria-label="Resumo financeiro">
+  @for (summary of summaries; track summary.label) {
+    <app-summary-card
+      [label]="summary.label"
+      [value]="summary.value"
+      [description]="summary.description"
+      [icon]="summary.icon"
+      [tone]="summary.tone"
+    />
+  }
+</section>
+
+<section class="dashboard-grid">
+  <article class="activity-panel" aria-labelledby="activity-title">
+    <div class="panel-heading">
+      <div>
+        <h2 id="activity-title">Atividade recente</h2>
+        <p>Dados estáticos para validar navegação e hierarquia.</p>
+      </div>
+      <app-status-badge label="Fake" variant="neutral" />
+    </div>
+
+    <ul class="activity-list">
+      @for (activity of activities; track activity.description) {
+        <li>
+          <div>
+            <strong>{{ activity.description }}</strong>
+            <span>{{ activity.detail }}</span>
+          </div>
+          <div class="activity-list__meta">
+            <strong>{{ activity.amount }}</strong>
+            <app-status-badge [label]="activity.badge" [variant]="activity.variant" />
+          </div>
+        </li>
+      }
+    </ul>
+  </article>
+
+  <aside class="state-panel" aria-label="Estados compartilhados">
+    <app-loading-state label="Carregando extrato" />
+    <app-empty-state
+      icon="group_add"
+      title="Nenhum favorecido recente"
+      description="Cadastre um favorecido para acelerar próximas transferências Pix."
+      actionLabel="Adicionar"
+    />
+    <app-error-state
+      title="Limite indisponível"
+      description="A consulta de limite será exibida quando a API fake estiver ativa."
+      actionLabel="Atualizar"
+    />
+  </aside>
+</section>

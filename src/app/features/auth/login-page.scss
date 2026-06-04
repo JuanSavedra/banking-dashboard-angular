@@ -1,0 +1,86 @@
+.login-page {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: var(--app-space-6);
+  background: var(--app-color-surface);
+}
+
+.login-card {
+  width: min(100%, 28rem);
+  padding: var(--app-space-8);
+  border: var(--app-border-subtle);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-color-background);
+}
+
+.login-card__brand {
+  display: flex;
+  gap: var(--app-space-3);
+  align-items: center;
+}
+
+.login-card__brand > span {
+  display: inline-grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border-radius: var(--app-radius-lg);
+  background: var(--app-color-primary);
+  color: var(--app-color-primary-contrast);
+  font-weight: 800;
+}
+
+.login-card__brand strong,
+.login-card__brand small {
+  display: block;
+}
+
+.login-card__brand small,
+.login-card__heading span {
+  color: var(--app-color-muted);
+}
+
+.login-card__heading {
+  margin: var(--app-space-8) 0 var(--app-space-6);
+}
+
+.login-card__heading p {
+  margin: 0 0 var(--app-space-2);
+  color: var(--app-color-primary);
+  font-size: var(--app-font-size-label);
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  font-size: var(--app-font-size-display);
+  line-height: 1.05;
+}
+
+form {
+  display: grid;
+  gap: var(--app-space-4);
+}
+
+.login-card__error {
+  margin: 0;
+  padding: var(--app-space-3);
+  border-radius: var(--app-radius-md);
+  background: var(--app-color-error-soft);
+  color: var(--app-color-error);
+}
+
+.login-card__hint {
+  display: grid;
+  gap: var(--app-space-1);
+  margin-top: var(--app-space-6);
+  padding: var(--app-space-4);
+  border-radius: var(--app-radius-md);
+  background: var(--app-color-surface);
+  color: var(--app-color-muted);
+}
+
+.login-card__hint strong {
+  color: var(--app-color-text);
+}

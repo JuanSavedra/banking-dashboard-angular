@@ -1,0 +1,55 @@
+<main class="login-page">
+  <section class="login-card" aria-labelledby="login-title">
+    <div class="login-card__brand">
+      <span aria-hidden="true">BD</span>
+      <div>
+        <strong>Banking Dashboard</strong>
+        <small>Ambiente demonstrativo</small>
+      </div>
+    </div>
+
+    <div class="login-card__heading">
+      <p>Fase 3</p>
+      <h1 id="login-title">Acesse sua conta</h1>
+      <span>Use e-mail ou CPF para entrar no fluxo autenticado fake.</span>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline">
+        <mat-label>E-mail ou CPF</mat-label>
+        <input matInput formControlName="identifier" autocomplete="username" />
+        @if (form.controls.identifier.hasError('required')) {
+          <mat-error>Informe e-mail ou CPF.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Senha</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+        />
+        @if (form.controls.password.hasError('required')) {
+          <mat-error>Informe a senha.</mat-error>
+        }
+        @if (form.controls.password.hasError('minlength')) {
+          <mat-error>A senha deve ter pelo menos 6 caracteres.</mat-error>
+        }
+      </mat-form-field>
+
+      @if (hasInvalidCredentials()) {
+        <p class="login-card__error" role="alert">Credenciais inválidas para o ambiente fake.</p>
+      }
+
+      <button mat-flat-button type="submit">Acessar conta</button>
+    </form>
+
+    <aside class="login-card__hint" aria-label="Credenciais de demonstração">
+      <strong>Credenciais fake</strong>
+      <span>ana&#64;banking.dev ou 12345678909</span>
+      <span>Senha: 123456</span>
+    </aside>
+  </section>
+</main>
