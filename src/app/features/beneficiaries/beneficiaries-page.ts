@@ -85,12 +85,23 @@ import {
               [variant]="statusVariant(beneficiary.status)"
             />
             <div class="beneficiaries-list__actions">
-              <a mat-button [routerLink]="['/app/beneficiaries', beneficiary.id]">Ver detalhe</a>
-              <a mat-button [routerLink]="['/app/beneficiaries', beneficiary.id, 'edit']">Editar</a>
+              <a
+                mat-button
+                [routerLink]="['/app/beneficiaries', beneficiary.id]"
+                [attr.aria-label]="'Ver detalhe de ' + beneficiary.name"
+                >Ver detalhe</a
+              >
+              <a
+                mat-button
+                [routerLink]="['/app/beneficiaries', beneficiary.id, 'edit']"
+                [attr.aria-label]="'Editar ' + beneficiary.name"
+                >Editar</a
+              >
               <button
                 mat-button
                 type="button"
                 [disabled]="submitting()"
+                [attr.aria-label]="'Excluir ' + beneficiary.name"
                 (click)="confirmDelete(beneficiary)"
               >
                 Excluir

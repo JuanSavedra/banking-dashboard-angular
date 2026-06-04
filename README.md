@@ -4,9 +4,9 @@ Aplicação front-end bancária em Angular para consulta de saldo, extrato, cart
 
 ## Status do Projeto
 
-Fase atual: **Fase 10 — Cartões**.
+Fase atual: **Fase 11 — Acessibilidade**.
 
-A Fase 10 aprofunda a área de cartões com limite, status, bloqueio, desbloqueio e compras recentes. A documentação detalhada está em [docs/fase-10.md](docs/fase-10.md).
+A Fase 11 revisa acessibilidade transversal: navegação por teclado, foco visível, semântica, estados anunciáveis e contraste. A documentação detalhada está em [docs/fase-11.md](docs/fase-11.md).
 
 ## Objetivo Técnico
 
@@ -83,6 +83,14 @@ A API roda no servidor Express do Angular SSR e expõe endpoints REST em `/api/*
 - `POST /api/transfers`
 - `GET /api/cards` e `PUT /api/cards/:id`
 
+## Acessibilidade
+
+- Foco visível global e link para pular direto ao conteúdo principal.
+- Navegação principal com estado ativo anunciado e menu mobile controlado por `aria-expanded`.
+- Formulários com labels, mensagens de erro claras e feedbacks de submissão anunciáveis.
+- Filtros, badges e estados usam texto explícito, sem depender apenas de cor.
+- Validação planejada com ESLint de templates, Lighthouse e axe DevTools.
+
 ## Credenciais de Acesso
 
 Use qualquer uma das opções abaixo para acessar o fluxo autenticado local:
@@ -102,3 +110,4 @@ Use qualquer uma das opções abaixo para acessar o fluxo autenticado local:
 - [docs/fase-4.md](docs/fase-4.md): API REST, services HTTP e telas conectadas.
 - [docs/fase-9.md](docs/fase-9.md): CRUD de favorecidos com rotas e formulários.
 - [docs/fase-10.md](docs/fase-10.md): gestão de cartões, limites e compras recentes.
+- [docs/fase-11.md](docs/fase-11.md): acessibilidade transversal e checklist WCAG.

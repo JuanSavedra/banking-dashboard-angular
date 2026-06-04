@@ -54,6 +54,7 @@ import {
           pageHeaderActions
           mat-button
           [routerLink]="['/app/beneficiaries', beneficiary()!.id, 'edit']"
+          [attr.aria-label]="'Editar ' + beneficiary()!.name"
         >
           <mat-icon aria-hidden="true">edit</mat-icon>
           Editar
@@ -65,6 +66,7 @@ import {
           mat-flat-button
           type="button"
           [disabled]="submitting()"
+          [attr.aria-label]="'Excluir ' + beneficiary()!.name"
           (click)="confirmDelete()"
         >
           <mat-icon aria-hidden="true">delete</mat-icon>

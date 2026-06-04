@@ -20,7 +20,7 @@
     description="Cadastre um favorecido antes de realizar uma transferência Pix."
   />
 } @else if (receipt()) {
-  <section class="receipt-panel" aria-label="Comprovante de transferência">
+  <section class="receipt-panel" aria-label="Comprovante de transferência" aria-live="polite">
     <div class="receipt-panel__header">
       <app-status-badge label="Concluído" variant="success" />
       <h2>Comprovante de transferência</h2>
@@ -50,7 +50,13 @@
   <section class="transfer-form-panel" aria-labelledby="transfer-form-title">
     <h2 id="transfer-form-title" class="transfer-form-panel__title">Dados da transferência</h2>
 
-    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="transfer-form">
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      novalidate
+      class="transfer-form"
+      [attr.aria-busy]="submitting()"
+    >
       <mat-form-field appearance="outline">
         <mat-label>Favorecido</mat-label>
         <mat-select formControlName="beneficiaryId">
@@ -95,6 +101,10 @@
           Não foi possível processar a transferência. Tente novamente.
         </p>
       }
+
+      <p class="app-sr-only" aria-live="polite">
+        {{ submitting() ? 'Processando transferência.' : '' }}
+      </p>
 
       <div class="transfer-form__actions">
         @if (selectedBeneficiary()) {

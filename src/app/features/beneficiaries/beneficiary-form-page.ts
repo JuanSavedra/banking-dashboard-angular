@@ -69,7 +69,13 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
       <section class="beneficiary-form-panel" aria-labelledby="beneficiary-form-title">
         <h2 id="beneficiary-form-title">Dados cadastrais</h2>
 
-        <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="beneficiary-form">
+        <form
+          [formGroup]="form"
+          (ngSubmit)="submit()"
+          novalidate
+          class="beneficiary-form"
+          [attr.aria-busy]="submitting()"
+        >
           <mat-form-field appearance="outline">
             <mat-label>Nome</mat-label>
             <input matInput formControlName="name" autocomplete="name" />
@@ -127,6 +133,10 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
               Não foi possível salvar o favorecido. Revise os dados e tente novamente.
             </p>
           }
+
+          <p class="app-sr-only" aria-live="polite">
+            {{ submitting() ? 'Salvando favorecido.' : '' }}
+          </p>
 
           <div class="beneficiary-form__actions">
             <a mat-button routerLink="/app/beneficiaries">Cancelar</a>

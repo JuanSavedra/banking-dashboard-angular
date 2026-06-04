@@ -1,9 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { map } from 'rxjs';
 
 import { logout } from '../store/auth/auth.actions';
 import { selectUser } from '../store/auth/auth.selectors';
@@ -22,10 +24,18 @@ interface NavigationItem {
   styleUrl: './app-shell.scss',
 })
 export class AppShellComponent {
+  private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly store = inject(Store);
 
   protected readonly productName = 'Banking Dashboard';
   protected readonly menuOpen = signal(false);
+  protected readonly compactLayout = toSignal(
+    this.breakpointObserver.observe('(max-width: 48rem)').pipe(map((state) => state.matches)),
+    { initialValue: false },
+  );
+  protected readonly sidebarHiddenFromKeyboard = computed(
+    () => this.compactLayout() && !this.menuOpen(),
+  );
   protected readonly user = toSignal(this.store.select(selectUser));
 
   protected readonly navigationItems: NavigationItem[] = [

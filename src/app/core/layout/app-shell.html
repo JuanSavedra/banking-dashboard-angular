@@ -1,8 +1,13 @@
+<a class="app-skip-link" href="#main-content">Pular para conteúdo principal</a>
+
 <div class="app-layout">
   <aside
+    id="app-sidebar"
     class="app-sidebar"
     [class.app-sidebar--open]="menuOpen()"
+    [attr.aria-hidden]="sidebarHiddenFromKeyboard() ? 'true' : null"
     aria-label="Navegação principal"
+    [attr.inert]="sidebarHiddenFromKeyboard() ? '' : null"
   >
     <div class="app-sidebar__brand">
       <span class="app-sidebar__mark" aria-hidden="true">BD</span>
@@ -14,9 +19,11 @@
     <nav class="app-sidebar__nav" aria-label="Áreas do dashboard">
       @for (item of navigationItems; track item.route) {
         <a
+          #activeLink="routerLinkActive"
           [routerLink]="item.route"
           routerLinkActive="app-sidebar__item--active"
           [routerLinkActiveOptions]="{ exact: item.route !== '/app/beneficiaries' }"
+          [attr.aria-current]="activeLink.isActive ? 'page' : null"
           (click)="closeMenu()"
         >
           <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
@@ -33,6 +40,7 @@
         type="button"
         class="app-topbar__menu"
         aria-label="Alternar navegação"
+        aria-controls="app-sidebar"
         [attr.aria-expanded]="menuOpen()"
         (click)="toggleMenu()"
       >
@@ -55,7 +63,7 @@
       </div>
     </header>
 
-    <main class="app-content">
+    <main id="main-content" class="app-content" tabindex="-1">
       <router-outlet />
     </main>
   </div>

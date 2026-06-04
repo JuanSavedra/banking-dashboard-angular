@@ -77,11 +77,11 @@ type LimitForm = FormGroup<{ availableLimit: FormControl<number> }>;
     } @else {
       <section class="cards-grid" aria-label="Cartões da conta">
         @for (card of cards(); track card.id) {
-          <article class="card-panel">
+          <article class="card-panel" [attr.aria-labelledby]="'card-title-' + card.id">
             <div class="card-panel__heading">
               <div>
                 <span>{{ typeLabel(card.type) }}</span>
-                <h2>Final {{ card.finalDigits }}</h2>
+                <h2 [id]="'card-title-' + card.id">Final {{ card.finalDigits }}</h2>
               </div>
               <app-status-badge
                 [label]="statusLabel(card.status)"
@@ -109,6 +109,7 @@ type LimitForm = FormGroup<{ availableLimit: FormControl<number> }>;
               [formGroup]="limitForm(card)"
               (ngSubmit)="submitLimit(card)"
               novalidate
+              [attr.aria-busy]="submitting()"
             >
               <mat-form-field appearance="outline">
                 <mat-label>Ajustar limite disponível</mat-label>
@@ -130,15 +131,24 @@ type LimitForm = FormGroup<{ availableLimit: FormControl<number> }>;
                 }
               </mat-form-field>
 
-              <button mat-button type="submit" [disabled]="submitting()">
+              <button
+                mat-button
+                type="submit"
+                [disabled]="submitting()"
+                [attr.aria-label]="'Salvar limite do cartão final ' + card.finalDigits"
+              >
                 <mat-icon aria-hidden="true">save</mat-icon>
                 Salvar limite
               </button>
+
+              <p class="app-sr-only" aria-live="polite">
+                {{ submitting() ? 'Atualizando cartão.' : '' }}
+              </p>
             </form>
 
-            <section class="purchases" aria-label="Compras recentes">
+            <section class="purchases" [attr.aria-labelledby]="'card-purchases-title-' + card.id">
               <div class="purchases__heading">
-                <h3>Compras recentes</h3>
+                <h3 [id]="'card-purchases-title-' + card.id">Compras recentes</h3>
                 <span>{{ card.recentPurchases.length }} lançamentos</span>
               </div>
 
@@ -169,6 +179,11 @@ type LimitForm = FormGroup<{ availableLimit: FormControl<number> }>;
               mat-flat-button
               type="button"
               [disabled]="submitting()"
+              [attr.aria-label]="
+                (card.status === 'active' ? 'Bloquear' : 'Desbloquear') +
+                ' cartão final ' +
+                card.finalDigits
+              "
               (click)="confirmStatus(card)"
             >
               <mat-icon aria-hidden="true">{{
