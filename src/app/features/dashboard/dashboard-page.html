@@ -3,10 +3,10 @@
   title="Visão financeira"
   description="Resumo financeiro e movimentações recentes da conta."
 >
-  <button pageHeaderActions mat-flat-button type="button">
+  <a pageHeaderActions mat-flat-button routerLink="/app/transfers">
     <mat-icon aria-hidden="true">add</mat-icon>
     Nova transferência
-  </button>
+  </a>
 </app-page-header>
 
 @if (loading()) {
@@ -37,38 +37,15 @@
     }
   </section>
 
-  <section class="dashboard-grid">
-    <article class="activity-panel" aria-labelledby="activity-title">
-      <div class="panel-heading">
-        <div>
-          <h2 id="activity-title">Atividade recente</h2>
-          <p>Últimas movimentações da conta.</p>
-        </div>
-        <app-status-badge label="API REST" variant="info" />
-      </div>
+  <section class="dashboard-grid" aria-label="Dashboard financeiro">
+    <app-recent-transactions [activities]="activities()" />
 
-      @if (activities().length) {
-        <ul class="activity-list">
-          @for (activity of activities(); track activity.description) {
-            <li>
-              <div>
-                <strong>{{ activity.description }}</strong>
-                <span>{{ activity.detail }}</span>
-              </div>
-              <div class="activity-list__meta">
-                <strong>{{ activity.amount }}</strong>
-                <app-status-badge [label]="activity.badge" [variant]="activity.variant" />
-              </div>
-            </li>
-          }
-        </ul>
-      } @else {
-        <app-empty-state
-          icon="receipt_long"
-          title="Sem movimentações recentes"
-          description="As transações aparecerão aqui quando houver lançamentos disponíveis."
-        />
-      }
-    </article>
+    <aside class="dashboard-sidebar">
+      <app-spending-chart
+        [income]="account()!.incomeThisMonth"
+        [outcome]="account()!.outcomeThisMonth"
+      />
+      <app-quick-actions />
+    </aside>
   </section>
 }

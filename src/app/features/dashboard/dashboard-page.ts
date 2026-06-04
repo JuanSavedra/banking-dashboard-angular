@@ -2,6 +2,7 @@ import { Component, computed, inject, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import { Transaction } from '../../core/models/banking';
@@ -21,14 +22,14 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header';
-import {
-  StatusBadgeComponent,
-  StatusBadgeVariant,
-} from '../../shared/components/status-badge/status-badge';
+import { StatusBadgeVariant } from '../../shared/components/status-badge/status-badge';
 import {
   SummaryCardComponent,
   SummaryCardTone,
 } from '../../shared/components/summary-card/summary-card';
+import { ActivityItem, RecentTransactionsComponent } from './components/recent-transactions';
+import { QuickActionsComponent } from './components/quick-actions';
+import { SpendingChartComponent } from './components/spending-chart';
 
 interface DashboardSummary {
   label: string;
@@ -36,14 +37,6 @@ interface DashboardSummary {
   description: string;
   icon: string;
   tone: SummaryCardTone;
-}
-
-interface ActivityItem {
-  description: string;
-  detail: string;
-  amount: string;
-  badge: string;
-  variant: StatusBadgeVariant;
 }
 
 @Component({
@@ -56,7 +49,10 @@ interface ActivityItem {
     MatButtonModule,
     MatIconModule,
     PageHeaderComponent,
-    StatusBadgeComponent,
+    QuickActionsComponent,
+    RecentTransactionsComponent,
+    RouterLink,
+    SpendingChartComponent,
     SummaryCardComponent,
   ],
   templateUrl: './dashboard-page.html',
@@ -100,7 +96,7 @@ export class DashboardPageComponent implements OnInit {
       {
         label: 'Saldo disponível',
         value: this.formatCurrency(account.balance),
-        description: `Conta ${account.branch} / ${account.number}`,
+        description: `Agência ${account.branch} · Conta ${account.number}`,
         icon: 'account_balance_wallet',
         tone: 'positive',
       },
@@ -123,7 +119,7 @@ export class DashboardPageComponent implements OnInit {
 
   protected readonly activities = computed<ActivityItem[]>(() =>
     this.transactions()
-      .slice(0, 4)
+      .slice(0, 5)
       .map((transaction) => ({
         description: transaction.description,
         detail: `${transaction.counterparty} · ${this.formatDate(transaction.occurredAt)}`,
