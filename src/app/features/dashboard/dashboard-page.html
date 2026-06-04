@@ -1,7 +1,7 @@
 <app-page-header
   eyebrow="Dashboard"
   title="Visão financeira"
-  description="Resumo da conta e movimentações recentes carregadas pela API fake."
+  description="Resumo financeiro e movimentações recentes da conta."
 >
   <button pageHeaderActions mat-flat-button type="button">
     <mat-icon aria-hidden="true">add</mat-icon>
@@ -14,7 +14,7 @@
 } @else if (error()) {
   <app-error-state
     title="Não foi possível carregar o dashboard"
-    description="Confira a API fake e tente novamente."
+    description="Tente novamente em instantes."
     actionLabel="Recarregar dashboard"
     (action)="loadDashboard()"
   />
@@ -22,7 +22,7 @@
   <app-empty-state
     icon="account_balance"
     title="Conta não encontrada"
-    description="A API fake não retornou dados de conta para o usuário autenticado."
+    description="Nenhum dado de conta encontrado para o usuário autenticado."
   />
 } @else {
   <section class="summary-grid" aria-label="Resumo financeiro">
@@ -42,9 +42,9 @@
       <div class="panel-heading">
         <div>
           <h2 id="activity-title">Atividade recente</h2>
-          <p>Últimas movimentações retornadas pela API fake.</p>
+          <p>Últimas movimentações da conta.</p>
         </div>
-        <app-status-badge label="API fake" variant="info" />
+        <app-status-badge label="API REST" variant="info" />
       </div>
 
       @if (activities().length) {
@@ -66,7 +66,7 @@
         <app-empty-state
           icon="receipt_long"
           title="Sem movimentações recentes"
-          description="As transações aparecerão aqui quando a API fake retornar lançamentos."
+          description="As transações aparecerão aqui quando houver lançamentos disponíveis."
         />
       }
     </article>

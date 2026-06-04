@@ -11,7 +11,7 @@
     <div class="login-card__heading">
       <p>Fase 3</p>
       <h1 id="login-title">Acesse sua conta</h1>
-      <span>Use e-mail ou CPF para entrar no fluxo autenticado fake.</span>
+      <span>Use e-mail ou CPF para acessar sua conta.</span>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
@@ -40,14 +40,14 @@
       </mat-form-field>
 
       @if (hasInvalidCredentials()) {
-        <p class="login-card__error" role="alert">Credenciais inválidas para o ambiente fake.</p>
+        <p class="login-card__error" role="alert">E-mail, CPF ou senha inválidos.</p>
       }
 
       <button mat-flat-button type="submit">Acessar conta</button>
     </form>
 
     <aside class="login-card__hint" aria-label="Credenciais de demonstração">
-      <strong>Credenciais fake</strong>
+      <strong>Credenciais de acesso</strong>
       <span>ana&#64;banking.dev ou 12345678909</span>
       <span>Senha: 123456</span>
     </aside>

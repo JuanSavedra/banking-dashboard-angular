@@ -4,22 +4,22 @@ Aplicação front-end bancária em Angular que simula um dashboard financeiro co
 
 ## Status do Projeto
 
-Fase atual: **Fase 4 — API fake e camada de serviços**.
+Fase atual: **Fase 4 — API REST e camada de serviços**.
 
-A Fase 4 conecta as telas principais a endpoints REST simulados no servidor SSR Express. A documentação detalhada está em [docs/fase-4.md](docs/fase-4.md).
+A Fase 4 conecta as telas principais a endpoints REST no servidor SSR Express. A documentação detalhada está em [docs/fase-4.md](docs/fase-4.md).
 
 ## Objetivo Técnico
 
-Demonstrar domínio de Angular moderno, rotas, formulários, API REST simulada, NgRx, RxJS, responsividade, SCSS, acessibilidade, performance, testes, Git e CI/CD em um produto bancário realista.
+Demonstrar domínio de Angular moderno, rotas, formulários, API REST, NgRx, RxJS, responsividade, SCSS, acessibilidade, performance, testes, Git e CI/CD em um produto bancário realista.
 
 ## Funcionalidades Planejadas
 
-- Login com autenticação fake.
+- Login com autenticação.
 - Dashboard com saldo, resumo financeiro, últimas transações, atalhos e notificações.
 - Extrato com filtros, busca e detalhe de transação.
-- Transferência Pix simulada, com validação, confirmação e comprovante.
+- Transferência Pix, com validação, confirmação e comprovante.
 - Favorecidos com listagem, cadastro, edição, remoção e detalhe.
-- Cartões com status, limite e ações simuladas.
+- Cartões com status, limite e ações de bloqueio.
 - Perfil com dados pessoais, preferências e segurança.
 - Página 404 e estados de loading, empty, error e success.
 
@@ -31,7 +31,7 @@ Demonstrar domínio de Angular moderno, rotas, formulários, API REST simulada, 
 - SCSS para tokens, tema, mixins e responsividade.
 - RxJS para fluxos assíncronos.
 - NgRx para gerenciamento de estado.
-- Express SSR para API fake em `/api/*`.
+- Express SSR para API REST em `/api/*`.
 - Vitest via Angular builder para testes unitários.
 - Prettier para formatação.
 
@@ -73,9 +73,9 @@ npm run serve:ssr:banking-dashboard
 
 Serve o build SSR gerado.
 
-## API Fake
+## API REST
 
-A API fake roda no servidor Express do Angular SSR e expõe endpoints REST em `/api/*`:
+A API roda no servidor Express do Angular SSR e expõe endpoints REST em `/api/*`:
 
 - `GET /api/account`
 - `GET /api/transactions` e `GET /api/transactions/:id`
@@ -83,7 +83,7 @@ A API fake roda no servidor Express do Angular SSR e expõe endpoints REST em `/
 - `POST /api/transfers`
 - `GET /api/cards` e `PUT /api/cards/:id`
 
-## Credenciais Fake
+## Credenciais de Acesso
 
 Use qualquer uma das opções abaixo para acessar o fluxo autenticado local:
 

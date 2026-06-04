@@ -27,7 +27,7 @@ import {
     <app-page-header
       eyebrow="Detalhes do favorecido"
       [title]="beneficiary()?.name ?? 'Favorecido'"
-      description="Dados retornados pelo endpoint REST fake de detalhe."
+      description="Dados cadastrais do favorecido."
     />
 
     @if (loading()) {
@@ -35,7 +35,7 @@ import {
     } @else if (error()) {
       <app-error-state
         title="Favorecido não encontrado"
-        description="A API fake não encontrou dados para a rota informada."
+        description="Não foi possível localizar os dados do favorecido."
         actionLabel="Recarregar detalhe"
         (action)="loadBeneficiary()"
       />

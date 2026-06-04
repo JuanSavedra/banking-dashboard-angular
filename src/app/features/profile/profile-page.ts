@@ -22,7 +22,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
       </article>
       <article>
         <span>Segurança</span>
-        <strong>Senha fake configurada</strong>
+        <strong>Senha configurada</strong>
         <app-status-badge label="Ambiente demo" variant="info" />
       </article>
     </section>

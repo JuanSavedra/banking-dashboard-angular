@@ -32,7 +32,7 @@ import {
     <app-page-header
       eyebrow="Favorecidos"
       title="Favorecidos Pix"
-      description="Lista carregada por endpoint REST fake com detalhe navegável."
+      description="Lista de favorecidos Pix com detalhe navegável."
     >
       <button pageHeaderActions mat-flat-button type="button" (click)="createDemoBeneficiary()">
         <mat-icon aria-hidden="true">person_add</mat-icon>
@@ -45,7 +45,7 @@ import {
     } @else if (error()) {
       <app-error-state
         title="Não foi possível carregar favorecidos"
-        description="A API fake não respondeu à consulta de favorecidos."
+        description="Não foi possível carregar os favorecidos. Tente novamente."
         actionLabel="Recarregar favorecidos"
         (action)="loadBeneficiaries()"
       />

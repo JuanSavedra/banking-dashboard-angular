@@ -26,7 +26,7 @@ import {
     <app-page-header
       eyebrow="Extrato"
       title="Extrato da conta"
-      description="Movimentações carregadas por service Angular e endpoint REST fake."
+      description="Movimentações e lançamentos da sua conta."
     />
 
     @if (loading()) {
@@ -34,7 +34,7 @@ import {
     } @else if (error()) {
       <app-error-state
         title="Não foi possível carregar o extrato"
-        description="A API fake não respondeu à consulta de transações."
+        description="Não foi possível carregar o extrato. Tente novamente."
         actionLabel="Recarregar extrato"
         (action)="loadTransactions()"
       />
@@ -42,7 +42,7 @@ import {
       <app-empty-state
         icon="receipt_long"
         title="Nenhuma transação encontrada"
-        description="As movimentações serão exibidas quando a API fake retornar lançamentos."
+        description="Nenhuma movimentação encontrada na conta."
       />
     } @else {
       <section class="transactions-panel" aria-label="Lista de transações">

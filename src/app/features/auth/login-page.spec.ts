@@ -22,7 +22,7 @@ describe('LoginPageComponent', () => {
     localStorage.clear();
   });
 
-  it('should render fake credentials hint', () => {
+  it('should render credentials hint', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;

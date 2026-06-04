@@ -41,6 +41,7 @@ __screenshots__/
 
 # Local contributor/agent context
 AGENTS.md
+CLAUDE.md
 context.md
 
 # Local AI harness skill installs

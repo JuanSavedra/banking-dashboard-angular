@@ -28,7 +28,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
     <app-page-header
       eyebrow="Transferência"
       title="Transferência Pix"
-      description="Chamada demo para POST /api/transfers com comprovante fake."
+      description="Envie uma transferência Pix para um favorecido cadastrado."
     />
 
     @if (loading()) {
@@ -36,7 +36,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
     } @else if (error()) {
       <app-error-state
         title="Não foi possível preparar a transferência"
-        description="A API fake não retornou favorecidos disponíveis."
+        description="Não foi possível carregar os favorecidos. Tente novamente."
         actionLabel="Recarregar favorecidos"
         (action)="loadBeneficiaries()"
       />
@@ -44,13 +44,13 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
       <app-empty-state
         icon="group_add"
         title="Cadastre um favorecido"
-        description="A transferência demo precisa de um favorecido retornado pela API fake."
+        description="Cadastre um favorecido para realizar transferências Pix."
       />
     } @else {
       <section class="transfer-panel" aria-label="Transferência demo">
         <div>
           <h2>Transferência demo</h2>
-          <p>Envia R$ 120,00 para {{ beneficiaries()[0].name }} e retorna um comprovante fake.</p>
+          <p>Envia R$ 120,00 para {{ beneficiaries()[0].name }} e gera um comprovante de transferência.</p>
         </div>
 
         <button
@@ -65,7 +65,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
       </section>
 
       @if (receipt()) {
-        <section class="receipt-panel" aria-label="Comprovante fake">
+        <section class="receipt-panel" aria-label="Comprovante de transferência">
           <app-status-badge label="Concluído" variant="success" />
           <h2>Comprovante {{ receipt()?.receiptCode }}</h2>
           <p>Valor: {{ formatCurrency(receipt()?.amount ?? 0) }}</p>

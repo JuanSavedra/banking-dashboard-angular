@@ -30,7 +30,7 @@ import {
     <app-page-header
       eyebrow="Cartões"
       title="Cartões e limites"
-      description="Cartões carregados pela API fake com atualização simples de status."
+      description="Seus cartões com limite e controle de status."
     />
 
     @if (loading()) {
@@ -38,7 +38,7 @@ import {
     } @else if (error()) {
       <app-error-state
         title="Não foi possível carregar cartões"
-        description="A API fake não respondeu à consulta de cartões."
+        description="Não foi possível carregar os cartões. Tente novamente."
         actionLabel="Recarregar cartões"
         (action)="loadCards()"
       />
@@ -46,7 +46,7 @@ import {
       <app-empty-state
         icon="credit_card"
         title="Nenhum cartão encontrado"
-        description="Os cartões aparecerão quando a API fake retornar dados."
+        description="Nenhum cartão encontrado na sua conta."
       />
     } @else {
       <section class="cards-grid" aria-label="Resumo dos cartões">
