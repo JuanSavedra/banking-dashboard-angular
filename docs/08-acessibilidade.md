@@ -1,4 +1,4 @@
-# Fase 11 — Acessibilidade
+# Acessibilidade
 
 ## Objetivo
 
@@ -36,7 +36,7 @@ Executar com o app local:
 - Rodar axe DevTools nas rotas principais.
 - Conferir se status, erros e submissões são compreensíveis sem depender apenas de cor.
 
-## Validações da Fase
+## Validações
 
 Executar:
 
@@ -49,6 +49,6 @@ npm run build
 
 Também revisar buscas estáticas por `any`, termos proibidos e botões de ícone sem nome acessível.
 
-## Próxima Fase
+## Próximos Passos
 
-Avançar para **Fase 12 — Performance**, mantendo as regras de acessibilidade como requisito de regressão.
+Avançar para **performance**, mantendo as regras de acessibilidade como requisito de regressão.

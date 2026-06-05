@@ -1,4 +1,4 @@
-# Fase 12 — Performance
+# Performance
 
 ## Objetivo
 
@@ -41,7 +41,7 @@ Executar localmente com o app servido pelo usuário:
 - Confirmar ausência de regressões em acessibilidade após as otimizações.
 - Registrar resultados principais para documentação final.
 
-## Validações da Fase
+## Validações
 
 Executar:
 
@@ -54,6 +54,6 @@ npm run build
 
 Também revisar buscas estáticas por `any`, listas sem `track` e termos proibidos.
 
-## Próxima Fase
+## Próximos Passos
 
-Avançar para **Fase 13 — Testes**, ampliando cobertura para proteger as otimizações e fluxos principais.
+Avançar para **testes**, ampliando cobertura para proteger as otimizações e fluxos principais.

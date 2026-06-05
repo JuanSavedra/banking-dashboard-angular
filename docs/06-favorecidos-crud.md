@@ -1,4 +1,4 @@
-# Fase 9 — CRUD de Favorecidos
+# CRUD de Favorecidos
 
 ## Objetivo
 
@@ -32,7 +32,7 @@ Implementar o CRUD completo de favorecidos com rotas dedicadas, formulário reat
 - Busca e paginação na listagem de favorecidos.
 - Atalho direto de transferência dentro do detalhe.
 
-## Validações da Fase
+## Validações
 
 Executar:
 
@@ -45,6 +45,6 @@ npm run build
 
 Se o build precisar baixar fontes externas, repetir com rede liberada.
 
-## Próxima Fase
+## Próximos Passos
 
-Avançar para **Fase 10 — Cartões**, aprofundando status, limite, bloqueio, desbloqueio e compras recentes.
+Avançar para **cartões**, aprofundando status, limite, bloqueio, desbloqueio e compras recentes.

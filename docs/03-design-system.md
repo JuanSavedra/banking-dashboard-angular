@@ -1,4 +1,4 @@
-# Fase 2 — Design System e Layout Base
+# Design System e Layout Base
 
 ## Objetivo
 
@@ -27,7 +27,7 @@ Construir a primeira base visual real do projeto antes das regras de negócio. E
 
 - **Shell preview estático:** valida layout e responsividade sem antecipar autenticação ou rotas privadas.
 - **Material como base:** Angular Material fornece acessibilidade e interações, enquanto tokens próprios controlam a identidade visual.
-- **SCSS modular:** tokens, base e utilitários ficam separados para facilitar evolução na Fase 3 e além.
+- **SCSS modular:** tokens, base e utilitários ficam separados para facilitar a evolução nas etapas seguintes.
 - **Flat by default:** profundidade vem de borda, superfície e contraste tonal; sombras não são decoração.
 - **Componentes standalone:** cada componente compartilhado pode ser importado diretamente por futuras features.
 
@@ -40,7 +40,7 @@ Construir a primeira base visual real do projeto antes das regras de negócio. E
 - Formulários reais.
 - Integração com dados dinâmicos.
 
-## Validações da Fase
+## Validações
 
 Executar:
 
@@ -59,6 +59,6 @@ git status --short --ignored
 
 Arquivos locais como `context.md`, `AGENTS.md`, skills, `.angular/`, `dist/` e `node_modules/` devem permanecer fora do commit.
 
-## Próxima Fase
+## Próximos Passos
 
-Avançar para **Fase 3 — Rotas, navegação e autenticação**, conectando o shell visual a rotas públicas/privadas, login, auth guard e página 404.
+Avançar para **rotas, navegação e autenticação**, conectando o shell visual a rotas públicas/privadas, login, auth guard e página 404.

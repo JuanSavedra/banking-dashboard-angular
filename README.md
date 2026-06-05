@@ -324,4 +324,13 @@ npm run serve:ssr:banking-dashboard # serve o build SSR
 
 - [`PRODUCT.md`](PRODUCT.md) — estratégia, público, propósito e princípios do produto.
 - [`DESIGN.md`](DESIGN.md) — sistema visual: tokens e componentes da interface.
-- [`docs/`](docs/) — registro de decisões por fase do projeto (fase-0 a fase-12).
+- [`docs/`](docs/) — registro de decisões técnicas por funcionalidade:
+  - [Planejamento do projeto](docs/01-planejamento.md)
+  - [Setup técnico inicial](docs/02-setup-inicial.md)
+  - [Design system e layout base](docs/03-design-system.md)
+  - [Rotas, navegação e autenticação](docs/04-autenticacao-e-rotas.md)
+  - [API REST e camada de serviços](docs/05-api-rest-e-servicos.md)
+  - [CRUD de favorecidos](docs/06-favorecidos-crud.md)
+  - [Cartões](docs/07-cartoes.md)
+  - [Acessibilidade](docs/08-acessibilidade.md)
+  - [Performance](docs/09-performance.md)

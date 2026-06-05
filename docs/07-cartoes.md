@@ -1,4 +1,4 @@
-# Fase 10 — Cartões
+# Cartões
 
 ## Objetivo
 
@@ -29,7 +29,7 @@ Aprofundar o domínio de cartões com limites, status, bloqueio, desbloqueio e c
 - Persistência permanente das alterações.
 - Validação financeira profunda de limite.
 
-## Validações da Fase
+## Validações
 
 Executar:
 
@@ -42,6 +42,6 @@ npm run build
 
 Se o build precisar baixar fontes externas, repetir com rede liberada.
 
-## Próxima Fase
+## Próximos Passos
 
-Com as fases planejadas concluídas, avançar para revisão final, polimento visual, acessibilidade, performance e CI/CD.
+Com as funcionalidades planejadas concluídas, avançar para revisão final, polimento visual, acessibilidade, performance e CI/CD.

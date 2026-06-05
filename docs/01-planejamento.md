@@ -1,4 +1,4 @@
-# Fase 0 — Planejamento do Projeto
+# Planejamento do Projeto
 
 ## Nome do Projeto
 
@@ -119,7 +119,7 @@ O produto atende dois públicos: o usuário funcional, que precisa operar tarefa
 - Mensagem direta de rota não encontrada.
 - Botão para voltar ao Dashboard.
 
-## Critérios de Conclusão da Fase 0
+## Critérios de Conclusão
 
 - Escopo completo documentado.
 - Stack definida sem dependências instaladas nesta fase.
@@ -129,6 +129,6 @@ O produto atende dois públicos: o usuário funcional, que precisa operar tarefa
 - README inicial atualizado.
 - Nenhuma implementação de UI, rota, serviço ou dependência nova iniciada.
 
-## Próxima Fase
+## Próximos Passos
 
-Avançar para **Fase 1 — Setup técnico inicial** somente após este planejamento estar revisado e commitado.
+Avançar para o **setup técnico inicial** somente após este planejamento estar revisado e commitado.

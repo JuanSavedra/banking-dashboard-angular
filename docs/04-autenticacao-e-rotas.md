@@ -1,8 +1,8 @@
-# Fase 3 — Rotas, Navegação e Autenticação
+# Rotas, Navegação e Autenticação
 
 ## Objetivo
 
-Conectar a base visual da Fase 2 ao Angular Router, criando navegação real, login, guards, interceptor de autenticação e página 404.
+Conectar a base visual do design system ao Angular Router, criando navegação real, login, guards, interceptor de autenticação e página 404.
 
 ## O que foi feito
 
@@ -40,7 +40,7 @@ Conectar a base visual da Fase 2 ao Angular Router, criando navegação real, lo
 - **Service + localStorage:** permite testar sessão após reload sem antecipar NgRx.
 - **ReturnUrl preservado:** usuário que tenta acessar rota privada volta para a rota original após login.
 - **Interceptor preparado:** já adiciona token em chamadas futuras, mas sem depender de API nesta fase.
-- **Placeholders úteis:** cada rota valida navegação e layout sem invadir Fase 4.
+- **Placeholders úteis:** cada rota valida navegação e layout sem invadir a etapa de API/serviços.
 
 ## Fora de Escopo
 
@@ -51,7 +51,7 @@ Conectar a base visual da Fase 2 ao Angular Router, criando navegação real, lo
 - Transferência funcional.
 - Dados dinâmicos de extrato, cartões ou perfil.
 
-## Validações da Fase
+## Validações
 
 Executar:
 
@@ -70,6 +70,6 @@ git status --short --ignored
 
 `context.md`, `AGENTS.md`, skills locais, `.angular/`, `dist/` e `node_modules/` devem permanecer fora do commit.
 
-## Próxima Fase
+## Próximos Passos
 
-Avançar para **Fase 4 — API REST e camada de serviços**, conectando os placeholders atuais a endpoints REST e services Angular tipados.
+Avançar para **API REST e camada de serviços**, conectando os placeholders atuais a endpoints REST e services Angular tipados.

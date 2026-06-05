@@ -1,4 +1,4 @@
-# Fase 1 — Setup Técnico Inicial
+# Setup Técnico Inicial
 
 ## Objetivo
 
@@ -19,7 +19,7 @@ Preparar a base profissional do projeto sem implementar regras de negócio, rota
 ## Decisões Técnicas
 
 - **Material manual:** evita defaults automáticos do `ng add` e mantém controle sobre tema e arquivos alterados.
-- **Tema inicial, não definitivo:** a Fase 2 ainda será responsável pelo design system completo, sidebar, topbar, componentes compartilhados e refinamento do `DESIGN.md`.
+- **Tema inicial, não definitivo:** a etapa de design system ainda cobrirá sidebar, topbar, componentes compartilhados e o refinamento do `DESIGN.md`.
 - **ESLint + Prettier separados:** ESLint valida código e templates; Prettier cuida da formatação.
 - **Estrutura com `.gitkeep`:** permite versionar os diretórios planejados sem criar código prematuro.
 - **Shell placeholder:** limpa o starter Angular sem antecipar rotas, autenticação ou layout completo.
@@ -50,7 +50,7 @@ src/app/
     transfers/
 ```
 
-## Validações da Fase
+## Validações
 
 Ao concluir a implementação, executar:
 
@@ -80,4 +80,4 @@ git status --short --ignored
 - Sidebar e topbar definitivas.
 - Design system completo.
 
-Esses itens pertencem às próximas fases do projeto.
+Esses itens pertencem às próximas etapas do projeto.

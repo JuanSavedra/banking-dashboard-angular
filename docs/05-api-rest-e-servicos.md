@@ -1,4 +1,4 @@
-# Fase 4 — API REST e Camada de Serviços
+# API REST e Camada de Serviços
 
 ## Objetivo
 
@@ -43,7 +43,7 @@ PUT    /api/cards/:id
 
 - **Express SSR:** aproveita o servidor já existente, sem dependência extra e com endpoints REST reais.
 - **Dados em memória:** suficiente para demonstrar GET, POST, PUT e DELETE sem persistência.
-- **Services antes de NgRx:** mantém separação de responsabilidades e prepara a Fase 5.
+- **Services antes de NgRx:** mantém separação de responsabilidades e prepara a etapa de gerenciamento de estado.
 - **UI conectada sem CRUD completo:** demonstra consumo HTTP sem antecipar formulários mais complexos.
 
 ## Fora de Escopo
@@ -54,7 +54,7 @@ PUT    /api/cards/:id
 - Formulários completos de cadastro/edição.
 - Validações bancárias profundas.
 
-## Validações da Fase
+## Validações
 
 Executar:
 
@@ -67,6 +67,6 @@ npm run build
 
 Se o build falhar ao baixar fontes do Google, repetir com rede liberada para permitir o inline de fontes.
 
-## Próxima Fase
+## Próximos Passos
 
-Avançar para **Fase 5 — NgRx e gerenciamento de estado**, conectando os services atuais a stores, effects e selectors.
+Avançar para **NgRx e gerenciamento de estado**, conectando os services atuais a stores, effects e selectors.
