@@ -61,20 +61,6 @@
   font-size: var(--app-font-size-label);
 }
 
-.app-sidebar__mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--app-control-size-md);
-  height: var(--app-control-size-md);
-  border-radius: var(--app-radius-lg);
-  background: var(--app-color-primary);
-  color: var(--app-color-primary-contrast);
-  font-size: var(--app-font-size-label);
-  font-weight: 800;
-  line-height: 1;
-}
-
 .app-sidebar__nav {
   display: grid;
   gap: var(--app-space-2);
