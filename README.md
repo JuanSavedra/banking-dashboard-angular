@@ -202,8 +202,7 @@ As rotas privadas são renderizadas dentro do `AppShellComponent` (sidebar + top
 
 Tokens CSS (`src/styles/_tokens.scss`) definem cores, tipografia, espaçamentos, raios, sombras,
 motion e z-index. Todos os estilos consomem esses tokens (sem valores hardcoded). Mixins de
-responsividade (`mobile`, `tablet`) ficam em `_mixins.scss`. Detalhes do sistema visual em
-[`DESIGN.md`](DESIGN.md).
+responsividade (`mobile`, `tablet`) ficam em `_mixins.scss`.
 
 ## Acessibilidade
 
@@ -322,8 +321,6 @@ npm run serve:ssr:banking-dashboard # serve o build SSR
 
 ## Documentação adicional
 
-- [`PRODUCT.md`](PRODUCT.md) — estratégia, público, propósito e princípios do produto.
-- [`DESIGN.md`](DESIGN.md) — sistema visual: tokens e componentes da interface.
 - [`docs/`](docs/) — registro de decisões técnicas por funcionalidade:
   - [Planejamento do projeto](docs/01-planejamento.md)
   - [Setup técnico inicial](docs/02-setup-inicial.md)

@@ -50,7 +50,11 @@ context.md
 .gemini/skills/
 
 # Impeccable local runtime state
-.impeccable/live/sessions/
+.impeccable/live/
+
+# Project planning/design docs
+DESIGN.md
+PRODUCT.md
 
 # System files
 .DS_Store
